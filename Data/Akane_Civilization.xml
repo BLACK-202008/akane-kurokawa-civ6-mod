@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<GameInfo>
+  <Civilizations>
+    <Row
+      CivilizationType="CIVILIZATION_LALALAI"
+      Name="LOC_CIVILIZATION_LALALAI_NAME"
+      Description="LOC_CIVILIZATION_LALALAI_NAME"
+      Adjective="LOC_CIVILIZATION_LALALAI_ADJECTIVE"
+      StartingCivilizationLevelType="CIVILIZATION_LEVEL_FULL_CIV"
+      RandomCityNameDepth="10"
+      Ethnicity="ETHNICITY_ASIAN"/>
+  </Civilizations>
+
+  <Traits>
+    <Row
+      TraitType="TRAIT_CIVILIZATION_LALALAI"
+      Name="LOC_TRAIT_CIVILIZATION_LALALAI_NAME"
+      Description="LOC_TRAIT_CIVILIZATION_LALALAI_DESCRIPTION"/>
+  </Traits>
+
+  <CivilizationTraits>
+    <Row CivilizationType="CIVILIZATION_LALALAI" TraitType="TRAIT_CIVILIZATION_LALALAI"/>
+  </CivilizationTraits>
+
+  <CivilizationLeaders>
+    <Row
+      CivilizationType="CIVILIZATION_LALALAI"
+      LeaderType="LEADER_KUROKAWA_AKANE"
+      CapitalName="LOC_CITY_NAME_LALALAI_TOKYO"/>
+  </CivilizationLeaders>
+
+  <CityNames>
+    <Row CivilizationType="CIVILIZATION_LALALAI" CityName="LOC_CITY_NAME_LALALAI_TOKYO"/>
+    <Row CivilizationType="CIVILIZATION_LALALAI" CityName="LOC_CITY_NAME_LALALAI_SHIBUYA"/>
+    <Row CivilizationType="CIVILIZATION_LALALAI" CityName="LOC_CITY_NAME_LALALAI_SHINJUKU"/>
+    <Row CivilizationType="CIVILIZATION_LALALAI" CityName="LOC_CITY_NAME_LALALAI_IKEBUKURO"/>
+    <Row CivilizationType="CIVILIZATION_LALALAI" CityName="LOC_CITY_NAME_LALALAI_AKIHABARA"/>
+    <Row CivilizationType="CIVILIZATION_LALALAI" CityName="LOC_CITY_NAME_LALALAI_YOKOHAMA"/>
+    <Row CivilizationType="CIVILIZATION_LALALAI" CityName="LOC_CITY_NAME_LALALAI_KYOTO"/>
+    <Row CivilizationType="CIVILIZATION_LALALAI" CityName="LOC_CITY_NAME_LALALAI_OSAKA"/>
+    <Row CivilizationType="CIVILIZATION_LALALAI" CityName="LOC_CITY_NAME_LALALAI_NAGOYA"/>
+    <Row CivilizationType="CIVILIZATION_LALALAI" CityName="LOC_CITY_NAME_LALALAI_FUKUOKA"/>
+  </CityNames>
+
+  <CivilizationCitizenNames>
+    <Row CivilizationType="CIVILIZATION_LALALAI" CitizenName="LOC_CITIZEN_LALALAI_1"/>
+    <Row CivilizationType="CIVILIZATION_LALALAI" CitizenName="LOC_CITIZEN_LALALAI_2"/>
+    <Row CivilizationType="CIVILIZATION_LALALAI" CitizenName="LOC_CITIZEN_LALALAI_3"/>
+    <Row CivilizationType="CIVILIZATION_LALALAI" CitizenName="LOC_CITIZEN_LALALAI_4"/>
+    <Row CivilizationType="CIVILIZATION_LALALAI" CitizenName="LOC_CITIZEN_LALALAI_5"/>
+  </CivilizationCitizenNames>
+</GameInfo>

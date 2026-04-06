@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<GameInfo>
+  <LoadingInfo>
+    <Row
+      LeaderType="LEADER_KUROKAWA_AKANE"
+      ForegroundImage="LEADER_KUROKAWA_AKANE_NEUTRAL.dds"
+      BackgroundImage="AkaneLoadingBackground.dds"/>
+  </LoadingInfo>
+</GameInfo>

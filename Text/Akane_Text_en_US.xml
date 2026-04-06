@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<GameInfo>
+  <LocalizedText>
+    <Row Tag="LOC_CIVILIZATION_LALALAI_NAME" Language="en_US"><Text>LALALAI</Text></Row>
+    <Row Tag="LOC_CIVILIZATION_LALALAI_DESCRIPTION" Language="en_US"><Text>A civilization led by Akane Kurokawa. Centered on the LALALAI Troupe and Stage Actors, it uses performances, district synergy, and role switching to spread cultural strength into faith, science, production, and combat.</Text></Row>
+    <Row Tag="LOC_CIVILIZATION_LALALAI_ADJECTIVE" Language="en_US"><Text>LALALAI</Text></Row>
+    <Row Tag="LOC_LEADER_KUROKAWA_AKANE_NAME" Language="en_US"><Text>Akane Kurokawa</Text></Row>
+    <Row Tag="LOC_LOADING_INFO_LEADER_KUROKAWA_AKANE" Language="en_US"><Text>Akane Kurokawa excels at reading the stage and understanding roles. By switching among Hoshino Ai, Sayahime, and Hoshino Ruby, she can redirect cultural, faith, science, production, and combat strengths to whatever the moment demands.</Text></Row>
+    <Row Tag="LOC_TRAIT_CIVILIZATION_LALALAI_NAME" Language="en_US"><Text>Versatile Stagecraft</Text></Row>
+    <Row Tag="LOC_TRAIT_CIVILIZATION_LALALAI_DESCRIPTION" Language="en_US"><Text>The LALALAI Troupe grants extra yields to adjacent specialty districts and boosts relevant building yields by +20%. Campuses, Commercial Hubs, Harbors, Encampments, and Holy Sites adjacent to a LALALAI Troupe also gain matching Great Person points. Stage Actor performances trigger stackable empire-wide Art Prosperity that strengthens district output across your cities.</Text></Row>
+    <Row Tag="LOC_TRAIT_LEADER_KUROKAWA_AKANE_NAME" Language="en_US"><Text>Roleplay Master</Text></Row>
+    <Row Tag="LOC_TRAIT_LEADER_KUROKAWA_AKANE_DESCRIPTION" Language="en_US"><Text>Akane starts in a Not Selected state and can switch between Hoshino Ai, Sayahime, and Hoshino Ruby. Each switch immediately changes her active bonuses (10-turn cooldown on Standard speed), grants +8% to all yields for half of the current game-speed cooldown duration, and awards a burst of Gold that scales with the current turn. Base effect "Reasoning Master": always grants +1 [ICON_Culture] Culture, grants +1 [ICON_Science] Science to Campuses adjacent to a LALALAI Troupe, and grants an additional +10% [ICON_Science] Science after researching Mathematics.</Text></Row>
+    <Row Tag="LOC_DISTRICT_LALALAI_TROUPE_NAME" Language="en_US"><Text>LALALAI Troupe</Text></Row>
+    <Row Tag="LOC_DISTRICT_LALALAI_TROUPE_DESCRIPTION" Language="en_US"><Text>Unique district replacing the Theater Square. Provides +2 [ICON_Culture] Culture and +2 Amenities, gains +2 [ICON_Gold] Gold from each adjacent City Center or Wonder, and grants +1 [ICON_Gold] Gold to adjacent Commercial Hubs and Harbors, +1 [ICON_Science] Science to Campuses, +1 [ICON_Production] Production to Encampments and Industrial Zones, and +1 [ICON_Faith] Faith to Holy Sites.</Text></Row>
+    <Row Tag="LOC_UNIT_STAGE_ACTOR_NAME" Language="en_US"><Text>Stage Actor</Text></Row>
+    <Row Tag="LOC_UNIT_STAGE_ACTOR_DESCRIPTION" Language="en_US"><Text>Akane's unique civilian unit with 3 performances. Each performance targets an owned LALALAI Troupe in one of your cities (one performance per city), permanently grows that city's Culture output, and removes the unit only after the final show.</Text></Row>
+    <Row Tag="LOC_AKANE_STAGE_ACTOR_PERFORM_NAME" Language="en_US"><Text>Stage Performance</Text></Row>
+    <Row Tag="LOC_AKANE_STAGE_ACTOR_PERFORM_TOOLTIP" Language="en_US"><Text>Perform on this owned LALALAI Troupe. Uses 1 performance charge ({1_num} remaining). One performance per city. Permanently grants this city +1 [ICON_Culture] Culture; Amphitheater, Art Museum, Archaeological Museum, and Broadcast Center in this city each gain an additional +1 [ICON_Culture] Culture and +20% Tourism from their associated Great Works. Also starts stackable empire-wide Art Prosperity. The unit is removed only after its final performance.</Text></Row>
+    <Row Tag="LOC_AKANE_STAGE_ACTOR_PERFORM_WORLD_TEXT" Language="en_US"><Text>[ICON_Culture] Stage performance reward applied. This unit has {1_num} performance(s) remaining. Empire-wide Art Prosperity is active: {2_num} stack(s), {3_num} turn(s) remaining.</Text></Row>
+    <Row Tag="LOC_AKANE_ART_PROSPERITY_APPLIED" Language="en_US"><Text></Text></Row>
+    <Row Tag="LOC_AKANE_ART_PROSPERITY_EXPIRED" Language="en_US"><Text>Empire-wide Art Prosperity has expired.</Text></Row>
+    <Row Tag="LOC_PROJECT_AKANE_MODE_AI_NAME" Language="en_US"><Text>Switch to Hoshino Ai</Text></Row>
+    <Row Tag="LOC_PROJECT_AKANE_MODE_ACTOR_NAME" Language="en_US"><Text>Switch to Sayahime</Text></Row>
+    <Row Tag="LOC_PROJECT_AKANE_MODE_WARRIOR_NAME" Language="en_US"><Text>Switch to Hoshino Ruby</Text></Row>
+    <Row Tag="LOC_AKANE_MODE_PANEL_TITLE" Language="en_US"><Text>Akane Mode</Text></Row>
+    <Row Tag="LOC_AKANE_MODE_CURRENT_LABEL" Language="en_US"><Text>Current Role</Text></Row>
+    <Row Tag="LOC_AKANE_MODE_COOLDOWN_LABEL" Language="en_US"><Text>Cooldown</Text></Row>
+    <Row Tag="LOC_AKANE_MODE_COOLDOWN_TURNS" Language="en_US"><Text>{1_num} turn(s) remaining</Text></Row>
+    <Row Tag="LOC_AKANE_MODE_READY" Language="en_US"><Text>Ready to choose/switch</Text></Row>
+    <Row Tag="LOC_AKANE_MODE_READY_ALERT" Language="en_US"><Text>Akane mode switching is ready again.</Text></Row>
+    <Row Tag="LOC_AKANE_MODE_STATUS" Language="en_US"><Text>Current: {1} | Cooldown: {2_num}</Text></Row>
+    <Row Tag="LOC_AKANE_MODE_NONE_NAME" Language="en_US"><Text>Not Selected</Text></Row>
+    <Row Tag="LOC_AKANE_MODE_AI_NAME" Language="en_US"><Text>Hoshino Ai</Text></Row>
+    <Row Tag="LOC_AKANE_MODE_ACTOR_NAME" Language="en_US"><Text>Sayahime</Text></Row>
+    <Row Tag="LOC_AKANE_MODE_WARRIOR_NAME" Language="en_US"><Text>Hoshino Ruby</Text></Row>
+    <Row Tag="LOC_AKANE_MODE_AI_TOOLTIP" Language="en_US"><Text>Adopt Hoshino Ai's role focus. Grants +1 [ICON_Faith] Faith; Great Prophet points are +1 flat and +1 per Holy Site district; and +30% [ICON_Faith] Faith. After switching, gain +8% to all yields for half your current cooldown and receive a Gold burst that scales with the current turn.</Text></Row>
+    <Row Tag="LOC_AKANE_MODE_ACTOR_TOOLTIP" Language="en_US"><Text>Adopt Sayahime's role focus. Grants +1 [ICON_Culture] Culture; Great Artist points are +1 flat and +1 per LALALAI Troupe district; +20% [ICON_Culture] Culture; and +30% Tourism. After switching, gain +8% to all yields for half your current cooldown and receive a Gold burst that scales with the current turn.</Text></Row>
+    <Row Tag="LOC_AKANE_MODE_WARRIOR_TOOLTIP" Language="en_US"><Text>Adopt Hoshino Ruby's role focus. Grants +5 [ICON_Strength] Combat Strength, +20% experience; Great General points are +1 flat and +1 per Encampment district; and +20% [ICON_Production] Production. After switching, gain +8% to all yields for half your current cooldown and receive a Gold burst that scales with the current turn.</Text></Row>
+    <Row Tag="LOC_AKANE_MODE_WARRIOR_COMBAT_SOURCE" Language="en_US"><Text>Hoshino Ruby role: +5 Combat Strength.</Text></Row>
+    <Row Tag="LOC_AKANE_MODE_SWITCHED" Language="en_US"><Text>Switched to {1}. This mode is now on cooldown for {2_num} turn(s); +8% to all yields lasts {3_num} turn(s), and you immediately gain {4_num} [ICON_Gold] Gold.</Text></Row>
+    <Row Tag="LOC_AKANE_MODE_COOLDOWN_ACTIVE" Language="en_US"><Text>Mode switch unavailable. {1_num} turn(s) of cooldown remaining.</Text></Row>
+    <Row Tag="LOC_AKANE_MODE_ALREADY_ACTIVE" Language="en_US"><Text>{1} is already active.</Text></Row>
+    <Row Tag="LOC_AKANE_MODE_NOT_AVAILABLE" Language="en_US"><Text>Akane mode switching is not available for this player.</Text></Row>
+    <Row Tag="LOC_CITY_NAME_LALALAI_TOKYO" Language="en_US"><Text>Tokyo</Text></Row>
+    <Row Tag="LOC_CITY_NAME_LALALAI_SHIBUYA" Language="en_US"><Text>Shibuya</Text></Row>
+    <Row Tag="LOC_CITY_NAME_LALALAI_SHINJUKU" Language="en_US"><Text>Shinjuku</Text></Row>
+    <Row Tag="LOC_CITY_NAME_LALALAI_IKEBUKURO" Language="en_US"><Text>Ikebukuro</Text></Row>
+    <Row Tag="LOC_CITY_NAME_LALALAI_AKIHABARA" Language="en_US"><Text>Akihabara</Text></Row>
+    <Row Tag="LOC_CITY_NAME_LALALAI_YOKOHAMA" Language="en_US"><Text>Yokohama</Text></Row>
+    <Row Tag="LOC_CITY_NAME_LALALAI_KYOTO" Language="en_US"><Text>Kyoto</Text></Row>
+    <Row Tag="LOC_CITY_NAME_LALALAI_OSAKA" Language="en_US"><Text>Osaka</Text></Row>
+    <Row Tag="LOC_CITY_NAME_LALALAI_NAGOYA" Language="en_US"><Text>Nagoya</Text></Row>
+    <Row Tag="LOC_CITY_NAME_LALALAI_FUKUOKA" Language="en_US"><Text>Fukuoka</Text></Row>
+    <Row Tag="LOC_CITIZEN_LALALAI_1" Language="en_US"><Text>Performer</Text></Row>
+    <Row Tag="LOC_CITIZEN_LALALAI_2" Language="en_US"><Text>Writer</Text></Row>
+    <Row Tag="LOC_CITIZEN_LALALAI_3" Language="en_US"><Text>Actor</Text></Row>
+    <Row Tag="LOC_CITIZEN_LALALAI_4" Language="en_US"><Text>Producer</Text></Row>
+    <Row Tag="LOC_CITIZEN_LALALAI_5" Language="en_US"><Text>Director</Text></Row>
+    <Row Tag="LOC_AKANE_ADJ_ENTERTAINMENT_CULTURE" Language="en_US"><Text>+1 [ICON_Culture] Culture from each adjacent Entertainment Complex.</Text></Row>
+    <Row Tag="LOC_AKANE_ADJ_CITY_CENTER_GOLD" Language="en_US"><Text>+2 [ICON_Gold] Gold from each adjacent City Center.</Text></Row>
+    <Row Tag="LOC_AKANE_ADJ_WONDER_GOLD" Language="en_US"><Text>+2 [ICON_Gold] Gold from each adjacent Wonder.</Text></Row>
+    <Row Tag="LOC_AKANE_ADJ_LALALAI_TO_CAMPUS_SCIENCE" Language="en_US"><Text>+1 [ICON_Science] Science from each adjacent LALALAI Troupe.</Text></Row>
+    <Row Tag="LOC_AKANE_ADJ_LALALAI_TO_COMMERCIAL_GOLD" Language="en_US"><Text>+1 [ICON_Gold] Gold from each adjacent LALALAI Troupe.</Text></Row>
+    <Row Tag="LOC_AKANE_ADJ_LALALAI_TO_HARBOR_GOLD" Language="en_US"><Text>+1 [ICON_Gold] Gold from each adjacent LALALAI Troupe.</Text></Row>
+    <Row Tag="LOC_AKANE_ADJ_LALALAI_TO_ENCAMPMENT_PRODUCTION" Language="en_US"><Text>+1 [ICON_Production] Production from each adjacent LALALAI Troupe.</Text></Row>
+    <Row Tag="LOC_AKANE_ADJ_LALALAI_TO_IZ_PRODUCTION" Language="en_US"><Text>+1 [ICON_Production] Production from each adjacent LALALAI Troupe.</Text></Row>
+    <Row Tag="LOC_AKANE_ADJ_LALALAI_TO_HOLYSITE_FAITH" Language="en_US"><Text>+1 [ICON_Faith] Faith from each adjacent LALALAI Troupe.</Text></Row>
+  </LocalizedText>
+</GameInfo>

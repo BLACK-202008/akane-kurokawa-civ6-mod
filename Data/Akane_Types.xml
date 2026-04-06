@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<GameInfo>
+  <Types>
+    <Row Type="CIVILIZATION_LALALAI" Kind="KIND_CIVILIZATION"/>
+    <Row Type="LEADER_KUROKAWA_AKANE" Kind="KIND_LEADER"/>
+    <Row Type="TRAIT_CIVILIZATION_LALALAI" Kind="KIND_TRAIT"/>
+    <Row Type="TRAIT_LEADER_KUROKAWA_AKANE" Kind="KIND_TRAIT"/>
+    <Row Type="DISTRICT_LALALAI_TROUPE" Kind="KIND_DISTRICT"/>
+    <Row Type="UNIT_STAGE_ACTOR" Kind="KIND_UNIT"/>
+  </Types>
+</GameInfo>

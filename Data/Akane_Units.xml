@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<GameInfo>
+  <TypeTags>
+    <Row Type="UNIT_STAGE_ACTOR" Tag="CLASS_LANDCIVILIAN"/>
+  </TypeTags>
+
+  <Units>
+    <Row
+      UnitType="UNIT_STAGE_ACTOR"
+      Name="LOC_UNIT_STAGE_ACTOR_NAME"
+      Description="LOC_UNIT_STAGE_ACTOR_DESCRIPTION"
+      Cost="120"
+      BaseMoves="4"
+      BaseSightRange="2"
+      ZoneOfControl="false"
+      Domain="DOMAIN_LAND"
+      FormationClass="FORMATION_CLASS_CIVILIAN"
+      PurchaseYield="YIELD_FAITH"
+      PrereqCivic="CIVIC_HUMANISM"
+      MustPurchase="FALSE"
+      CostProgressionModel="COST_PROGRESSION_PREVIOUS_COPIES"
+      CostProgressionParam1="50"
+      CanRetreatWhenCaptured="True"
+      PseudoYieldType="PSEUDOYIELD_UNIT_RELIGIOUS"
+      TraitType="TRAIT_CIVILIZATION_LALALAI"/>
+  </Units>
+</GameInfo>

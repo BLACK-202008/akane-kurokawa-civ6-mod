@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<GameInfo>
+  <DistrictReplaces>
+    <Row CivUniqueDistrictType="DISTRICT_LALALAI_TROUPE" ReplacesDistrictType="DISTRICT_THEATER"/>
+  </DistrictReplaces>
+
+  <Districts>
+    <Row
+      DistrictType="DISTRICT_LALALAI_TROUPE"
+      Name="LOC_DISTRICT_LALALAI_TROUPE_NAME"
+      Description="LOC_DISTRICT_LALALAI_TROUPE_DESCRIPTION"
+      PrereqCivic="CIVIC_DRAMA_POETRY"
+      PlunderType="PLUNDER_CULTURE"
+      PlunderAmount="25"
+      AdvisorType="ADVISOR_CULTURE"
+      Cost="27"
+      CostProgressionModel="COST_PROGRESSION_NUM_UNDER_AVG_PLUS_TECH"
+      CostProgressionParam1="40"
+      Maintenance="1"
+      Entertainment="2"
+      RequiresPlacement="true"
+      RequiresPopulation="true"
+      Aqueduct="false"
+      NoAdjacentCity="false"
+      InternalOnly="false"
+      ZOC="false"
+      CaptureRemovesBuildings="false"
+      CaptureRemovesCityDefenses="false"
+      MilitaryDomain="NO_DOMAIN"
+      Appeal="1"
+      CityStrengthModifier="2"
+      TraitType="TRAIT_CIVILIZATION_LALALAI"/>
+  </Districts>
+
+  <District_CitizenYieldChanges>
+    <Row DistrictType="DISTRICT_LALALAI_TROUPE" YieldType="YIELD_CULTURE" YieldChange="2"/>
+  </District_CitizenYieldChanges>
+
+  <District_GreatPersonPoints>
+    <Row DistrictType="DISTRICT_LALALAI_TROUPE" GreatPersonClassType="GREAT_PERSON_CLASS_WRITER" PointsPerTurn="1"/>
+    <Row DistrictType="DISTRICT_LALALAI_TROUPE" GreatPersonClassType="GREAT_PERSON_CLASS_ARTIST" PointsPerTurn="1"/>
+    <Row DistrictType="DISTRICT_LALALAI_TROUPE" GreatPersonClassType="GREAT_PERSON_CLASS_MUSICIAN" PointsPerTurn="1"/>
+  </District_GreatPersonPoints>
+
+  <District_TradeRouteYields>
+    <Row DistrictType="DISTRICT_LALALAI_TROUPE" YieldType="YIELD_FOOD" YieldChangeAsOrigin="0" YieldChangeAsDomesticDestination="1" YieldChangeAsInternationalDestination="0"/>
+    <Row DistrictType="DISTRICT_LALALAI_TROUPE" YieldType="YIELD_CULTURE" YieldChangeAsOrigin="0" YieldChangeAsDomesticDestination="0" YieldChangeAsInternationalDestination="1"/>
+  </District_TradeRouteYields>
+
+  <District_Adjacencies>
+    <Row DistrictType="DISTRICT_LALALAI_TROUPE" YieldChangeId="Wonder_Culture"/>
+    <Row DistrictType="DISTRICT_LALALAI_TROUPE" YieldChangeId="District_Culture"/>
+    <Row DistrictType="DISTRICT_LALALAI_TROUPE" YieldChangeId="Lalalai_CityCenter_Culture"/>
+    <Row DistrictType="DISTRICT_LALALAI_TROUPE" YieldChangeId="Lalalai_CityCenter_Gold"/>
+    <Row DistrictType="DISTRICT_LALALAI_TROUPE" YieldChangeId="Lalalai_Wonder_Gold"/>
+    <Row DistrictType="DISTRICT_LALALAI_TROUPE" YieldChangeId="Lalalai_Entertainment_Culture"/>
+
+    <Row DistrictType="DISTRICT_CAMPUS" YieldChangeId="Lalalai_To_Campus_Science"/>
+    <Row DistrictType="DISTRICT_COMMERCIAL_HUB" YieldChangeId="Lalalai_To_CommercialHub_Gold"/>
+    <Row DistrictType="DISTRICT_HARBOR" YieldChangeId="Lalalai_To_Harbor_Gold"/>
+    <Row DistrictType="DISTRICT_ENCAMPMENT" YieldChangeId="Lalalai_To_Encampment_Production"/>
+    <Row DistrictType="DISTRICT_INDUSTRIAL_ZONE" YieldChangeId="Lalalai_To_IndustrialZone_Production"/>
+    <Row DistrictType="DISTRICT_HOLY_SITE" YieldChangeId="Lalalai_To_HolySite_Faith"/>
+  </District_Adjacencies>
+
+  <Adjacency_YieldChanges>
+    <Row ID="Lalalai_CityCenter_Culture" Description="LOC_DISTRICT_CULTURE_CITY_CENTER" YieldType="YIELD_CULTURE" YieldChange="1" TilesRequired="1" AdjacentDistrict="DISTRICT_CITY_CENTER"/>
+    <Row ID="Lalalai_CityCenter_Gold" Description="LOC_AKANE_ADJ_CITY_CENTER_GOLD" YieldType="YIELD_GOLD" YieldChange="2" TilesRequired="1" AdjacentDistrict="DISTRICT_CITY_CENTER"/>
+    <Row ID="Lalalai_Wonder_Gold" Description="LOC_AKANE_ADJ_WONDER_GOLD" YieldType="YIELD_GOLD" YieldChange="2" TilesRequired="1" AdjacentWonder="true"/>
+    <Row ID="Lalalai_Entertainment_Culture" Description="LOC_AKANE_ADJ_ENTERTAINMENT_CULTURE" YieldType="YIELD_CULTURE" YieldChange="1" TilesRequired="1" AdjacentDistrict="DISTRICT_ENTERTAINMENT_COMPLEX"/>
+
+    <Row ID="Lalalai_To_Campus_Science" Description="LOC_AKANE_ADJ_LALALAI_TO_CAMPUS_SCIENCE" YieldType="YIELD_SCIENCE" YieldChange="1" TilesRequired="1" AdjacentDistrict="DISTRICT_LALALAI_TROUPE"/>
+    <Row ID="Lalalai_To_CommercialHub_Gold" Description="LOC_AKANE_ADJ_LALALAI_TO_COMMERCIAL_GOLD" YieldType="YIELD_GOLD" YieldChange="1" TilesRequired="1" AdjacentDistrict="DISTRICT_LALALAI_TROUPE"/>
+    <Row ID="Lalalai_To_Harbor_Gold" Description="LOC_AKANE_ADJ_LALALAI_TO_HARBOR_GOLD" YieldType="YIELD_GOLD" YieldChange="1" TilesRequired="1" AdjacentDistrict="DISTRICT_LALALAI_TROUPE"/>
+    <Row ID="Lalalai_To_Encampment_Production" Description="LOC_AKANE_ADJ_LALALAI_TO_ENCAMPMENT_PRODUCTION" YieldType="YIELD_PRODUCTION" YieldChange="1" TilesRequired="1" AdjacentDistrict="DISTRICT_LALALAI_TROUPE"/>
+    <Row ID="Lalalai_To_IndustrialZone_Production" Description="LOC_AKANE_ADJ_LALALAI_TO_IZ_PRODUCTION" YieldType="YIELD_PRODUCTION" YieldChange="1" TilesRequired="1" AdjacentDistrict="DISTRICT_LALALAI_TROUPE"/>
+    <Row ID="Lalalai_To_HolySite_Faith" Description="LOC_AKANE_ADJ_LALALAI_TO_HOLYSITE_FAITH" YieldType="YIELD_FAITH" YieldChange="1" TilesRequired="1" AdjacentDistrict="DISTRICT_LALALAI_TROUPE"/>
+  </Adjacency_YieldChanges>
+</GameInfo>

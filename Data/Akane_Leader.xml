@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<GameInfo>
+  <Leaders>
+    <Row
+      LeaderType="LEADER_KUROKAWA_AKANE"
+      Name="LOC_LEADER_KUROKAWA_AKANE_NAME"
+      InheritFrom="LEADER_DEFAULT"
+      Sex="Female"
+      SceneLayers="4"/>
+  </Leaders>
+
+  <Traits>
+    <Row
+      TraitType="TRAIT_LEADER_KUROKAWA_AKANE"
+      Name="LOC_TRAIT_LEADER_KUROKAWA_AKANE_NAME"
+      Description="LOC_TRAIT_LEADER_KUROKAWA_AKANE_DESCRIPTION"/>
+  </Traits>
+
+  <LeaderTraits>
+    <Row LeaderType="LEADER_KUROKAWA_AKANE" TraitType="TRAIT_LEADER_KUROKAWA_AKANE"/>
+  </LeaderTraits>
+</GameInfo>

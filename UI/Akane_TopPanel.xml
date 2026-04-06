@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Context Name="AkaneModePanel">
+  <Grid ID="AkaneModePanelRoot" Offset="0,8" Size="350,126" Texture="Controls_DropdownPanel" Color="54,37,42,220" Anchor="C,T" Hidden="0">
+    <Box Offset="0,0" Size="parent-4,parent-4" Color="30,20,24,180">
+      <Image Texture="Controls_GradientSmall" Size="parent,28" Color="0,0,0,220" Anchor="L,T"/>
+      <Label ID="ModeTitle" Anchor="L,T" Offset="10,6" String="LOC_AKANE_MODE_PANEL_TITLE" Style="FontTitleSmall" Color="255,235,220,255"/>
+      <Label ID="ModeCurrentLabel" Anchor="L,T" Offset="10,34" Size="92,20" String="LOC_AKANE_MODE_CURRENT_LABEL" Style="FontNormal14" Color="215,185,170,255"/>
+      <Label ID="ModeCurrentValue" Anchor="L,T" Offset="108,34" Size="232,20" String="" Style="FontNormal14" Color="230,220,215,255"/>
+      <Label ID="ModeCooldownLabel" Anchor="L,T" Offset="10,56" Size="92,20" String="LOC_AKANE_MODE_COOLDOWN_LABEL" Style="FontNormal14" Color="215,185,170,255"/>
+      <Label ID="ModeCooldownValue" Anchor="L,T" Offset="108,56" Size="232,20" String="" Style="FontNormal14" Color="230,220,215,255"/>
+      <Stack ID="ModeButtonStack" Anchor="L,B" Offset="10,-12" StackGrowth="Right" StackPadding="8">
+        <Button ID="ModeAIButton" Texture="LaunchBar_Hook_ButtonSmall.dds" Style="ButtonDisabledText" Size="100,34" ToolTip="LOC_AKANE_MODE_AI_TOOLTIP">
+          <Label ID="ModeAIButtonLabel" Anchor="C,C" String="LOC_AKANE_MODE_AI_NAME" Style="FontNormal14" Color="255,255,255,255"/>
+        </Button>
+        <Button ID="ModeActorButton" Texture="LaunchBar_Hook_ButtonSmall.dds" Style="ButtonDisabledText" Size="100,34" ToolTip="LOC_AKANE_MODE_ACTOR_TOOLTIP">
+          <Label ID="ModeActorButtonLabel" Anchor="C,C" String="LOC_AKANE_MODE_ACTOR_NAME" Style="FontNormal14" Color="255,255,255,255"/>
+        </Button>
+        <Button ID="ModeWarriorButton" Texture="LaunchBar_Hook_ButtonSmall.dds" Style="ButtonDisabledText" Size="100,34" ToolTip="LOC_AKANE_MODE_WARRIOR_TOOLTIP">
+          <Label ID="ModeWarriorButtonLabel" Anchor="C,C" String="LOC_AKANE_MODE_WARRIOR_NAME" Style="FontNormal14" Color="255,255,255,255"/>
+        </Button>
+      </Stack>
+    </Box>
+  </Grid>
+</Context>

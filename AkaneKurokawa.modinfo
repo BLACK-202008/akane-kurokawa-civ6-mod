@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Mod id="5f654a41-9dba-4bfd-b957-c7846fb1f79f" version="1">
+  <Properties>
+    <Name>Akane Kurokawa - Lalalai Troupe</Name>
+    <Teaser>Playable Civilization VI custom civilization led by Akane Kurokawa.</Teaser>
+    <Description>Scaffold for Akane Kurokawa civ mod with frontend and gameplay action separation.</Description>
+    <Authors>oh_black</Authors>
+    <CompatibleVersions>2.0</CompatibleVersions>
+  </Properties>
+
+  <References>
+    <Mod id="1B28771A-C749-434B-9053-D1380C553DE9" title="Expansion: Rise and Fall" />
+    <Mod id="4873eb62-8ccc-4574-b784-dda455e74e68" title="Expansion: Gathering Storm" />
+  </References>
+
+  <Files>
+    <File>Data/Akane_Config.sql</File>
+    <File>Data/Akane_Config.xml</File>
+    <File>Data/Akane_Types.xml</File>
+    <File>Data/Akane_Civilization.xml</File>
+    <File>Data/Akane_Leader.xml</File>
+    <File>Data/Akane_Diplomacy.xml</File>
+    <File>Data/Akane_Loading.xml</File>
+    <File>Data/Akane_Districts.xml</File>
+    <File>Data/Akane_Units.xml</File>
+    <File>Data/Akane_Requirements.sql</File>
+    <File>Data/Akane_Modifiers.sql</File>
+    <File>Data/Akane_Properties.sql</File>
+    <File>Scripts/Akane_Gameplay.lua</File>
+    <File>Scripts/Akane_ModeSystem.lua</File>
+    <File>UI/Akane_UnitPanel.lua</File>
+    <File>UI/Akane_UnitPanel_Base.lua</File>
+    <File>UI/Akane_UnitPanel_Expansion1.lua</File>
+    <File>UI/Akane_UnitPanel_Expansion2.lua</File>
+    <File>UI/Akane_TopPanel.lua</File>
+    <File>UI/Akane_TopPanel.xml</File>
+    <File>UI/Akane_DiplomacyOverlay.lua</File>
+    <File>UI/Akane_DiplomacyOverlay.xml</File>
+    <File>UI/Akane_ProductionPanel_Expansion2.lua</File>
+    <File>UI/Akane_ProductionHelper.lua</File>
+    <File>UI/Akane_CitySupport_Expansion2.lua</File>
+    <File>Text/Akane_Text_en_US.xml</File>
+    <File>Text/Akane_Text_zh_Hans_CN.xml</File>
+    <File>Icons/Akane_Icons.xml</File>
+    <File>Textures/AkaneLeader32.dds</File>
+    <File>Textures/AkaneLeader45.dds</File>
+    <File>Textures/AkaneLeader48.dds</File>
+    <File>Textures/AkaneLeader50.dds</File>
+    <File>Textures/AkaneLeader55.dds</File>
+    <File>Textures/AkaneLeader64.dds</File>
+    <File>Textures/AkaneLeader80.dds</File>
+    <File>Textures/AkaneLeader256.dds</File>
+    <File>Textures/LEADER_KUROKAWA_AKANE_NEUTRAL.dds</File>
+    <File>Textures/LEADER_KUROKAWA_AKANE_DIPLOMACY.dds</File>
+    <File>Textures/AkaneDiplomacyBackground.dds</File>
+    <File>Textures/AkaneDiplomacyForeground.dds</File>
+    <File>Textures/AkaneDiplomacyBottomMask.dds</File>
+    <File>Textures/AkaneLoadingBackground.dds</File>
+    <File>Akane_Art.dep</File>
+    <File>ArtDefs/Units.artdef</File>
+    <File>ArtDefs/Districts.artdef</File>
+  </Files>
+
+  <FrontEndActions>
+    <ImportFiles id="FrontEndTextures">
+      <Properties>
+        <LoadOrder>140</LoadOrder>
+      </Properties>
+      <File>Textures/AkaneLeader32.dds</File>
+      <File>Textures/AkaneLeader45.dds</File>
+      <File>Textures/AkaneLeader48.dds</File>
+      <File>Textures/AkaneLeader50.dds</File>
+      <File>Textures/AkaneLeader55.dds</File>
+      <File>Textures/AkaneLeader64.dds</File>
+      <File>Textures/AkaneLeader80.dds</File>
+      <File>Textures/AkaneLeader256.dds</File>
+      <File>Textures/LEADER_KUROKAWA_AKANE_NEUTRAL.dds</File>
+      <File>Textures/AkaneLoadingBackground.dds</File>
+    </ImportFiles>
+    <UpdateDatabase id="Config">
+      <Properties>
+        <LoadOrder>90</LoadOrder>
+      </Properties>
+      <File>Data/Akane_Config.sql</File>
+    </UpdateDatabase>
+    <UpdateText id="FrontEndText">
+      <Properties>
+        <LoadOrder>200</LoadOrder>
+      </Properties>
+      <File>Text/Akane_Text_en_US.xml</File>
+      <File>Text/Akane_Text_zh_Hans_CN.xml</File>
+    </UpdateText>
+    <UpdateIcons id="FrontEndIcons">
+      <Properties>
+        <LoadOrder>150</LoadOrder>
+      </Properties>
+      <File>Icons/Akane_Icons.xml</File>
+    </UpdateIcons>
+  </FrontEndActions>
+
+  <InGameActions>
+    <UpdateArt id="Akane_ArtDefs">
+      <Properties>
+        <LoadOrder>80</LoadOrder>
+      </Properties>
+      <File>Akane_Art.dep</File>
+    </UpdateArt>
+    <UpdateDatabase id="Gameplay">
+      <Properties>
+        <LoadOrder>90</LoadOrder>
+      </Properties>
+      <File>Data/Akane_Types.xml</File>
+      <File>Data/Akane_Civilization.xml</File>
+      <File>Data/Akane_Leader.xml</File>
+      <File>Data/Akane_Diplomacy.xml</File>
+      <File>Data/Akane_Loading.xml</File>
+      <File>Data/Akane_Districts.xml</File>
+      <File>Data/Akane_Units.xml</File>
+      <File>Data/Akane_Requirements.sql</File>
+      <File>Data/Akane_Modifiers.sql</File>
+      <File>Data/Akane_Properties.sql</File>
+    </UpdateDatabase>
+    <UpdateText id="InGameText">
+      <Properties>
+        <LoadOrder>200</LoadOrder>
+      </Properties>
+      <File>Text/Akane_Text_en_US.xml</File>
+      <File>Text/Akane_Text_zh_Hans_CN.xml</File>
+    </UpdateText>
+    <UpdateIcons id="InGameIcons">
+      <Properties>
+        <LoadOrder>150</LoadOrder>
+      </Properties>
+      <File>Icons/Akane_Icons.xml</File>
+    </UpdateIcons>
+    <AddGameplayScripts id="GameplayLua">
+      <File>Scripts/Akane_Gameplay.lua</File>
+      <File>Scripts/Akane_ModeSystem.lua</File>
+    </AddGameplayScripts>
+    <ImportFiles id="Akane_UIFiles">
+      <File>UI/Akane_UnitPanel.lua</File>
+      <File>UI/Akane_UnitPanel_Base.lua</File>
+      <File>UI/Akane_UnitPanel_Expansion1.lua</File>
+      <File>UI/Akane_UnitPanel_Expansion2.lua</File>
+      <File>UI/Akane_TopPanel.lua</File>
+      <File>UI/Akane_TopPanel.xml</File>
+      <File>UI/Akane_DiplomacyOverlay.lua</File>
+      <File>UI/Akane_DiplomacyOverlay.xml</File>
+      <File>UI/Akane_ProductionPanel_Expansion2.lua</File>
+      <File>UI/Akane_ProductionHelper.lua</File>
+      <File>UI/Akane_CitySupport_Expansion2.lua</File>
+      <File>ArtDefs/Units.artdef</File>
+      <File>ArtDefs/Districts.artdef</File>
+      <File>Textures/AkaneLeader32.dds</File>
+      <File>Textures/AkaneLeader45.dds</File>
+      <File>Textures/AkaneLeader48.dds</File>
+      <File>Textures/AkaneLeader50.dds</File>
+      <File>Textures/AkaneLeader55.dds</File>
+      <File>Textures/AkaneLeader64.dds</File>
+      <File>Textures/AkaneLeader80.dds</File>
+      <File>Textures/AkaneLeader256.dds</File>
+      <File>Textures/LEADER_KUROKAWA_AKANE_NEUTRAL.dds</File>
+      <File>Textures/LEADER_KUROKAWA_AKANE_DIPLOMACY.dds</File>
+      <File>Textures/AkaneDiplomacyBackground.dds</File>
+      <File>Textures/AkaneDiplomacyForeground.dds</File>
+      <File>Textures/AkaneDiplomacyBottomMask.dds</File>
+      <File>Textures/AkaneLoadingBackground.dds</File>
+    </ImportFiles>
+    <AddUserInterfaces id="Akane_ModeUI">
+      <Properties>
+        <Context>InGame</Context>
+        <LoadOrder>100001</LoadOrder>
+      </Properties>
+      <Items>
+        <File>UI/Akane_TopPanel.xml</File>
+        <File>UI/Akane_DiplomacyOverlay.xml</File>
+      </Items>
+    </AddUserInterfaces>
+    <ReplaceUIScript id="Akane_UnitPanel_Base" criteria="BaseGame">
+      <Properties>
+        <LoadOrder>100000</LoadOrder>
+        <LuaContext>UnitPanel</LuaContext>
+        <LuaReplace>UI/Akane_UnitPanel_Base.lua</LuaReplace>
+      </Properties>
+    </ReplaceUIScript>
+    <ReplaceUIScript id="Akane_UnitPanel_Expansion1" criteria="Expansion1">
+      <Properties>
+        <LoadOrder>100000</LoadOrder>
+        <LuaContext>UnitPanel</LuaContext>
+        <LuaReplace>UI/Akane_UnitPanel_Expansion1.lua</LuaReplace>
+      </Properties>
+    </ReplaceUIScript>
+    <ReplaceUIScript id="Akane_UnitPanel_Expansion2" criteria="Expansion2">
+      <Properties>
+        <LoadOrder>100000</LoadOrder>
+        <LuaContext>UnitPanel</LuaContext>
+        <LuaReplace>UI/Akane_UnitPanel_Expansion2.lua</LuaReplace>
+      </Properties>
+    </ReplaceUIScript>
+    <ReplaceUIScript id="Akane_ProductionPanel_Expansion2" criteria="Expansion2">
+      <Properties>
+        <LoadOrder>100000</LoadOrder>
+        <LuaContext>ProductionPanel</LuaContext>
+        <LuaReplace>UI/Akane_ProductionPanel_Expansion2.lua</LuaReplace>
+      </Properties>
+    </ReplaceUIScript>
+  </InGameActions>
+
+  <ActionCriteria>
+    <Criteria id="BaseGame">
+      <GameCoreInUse inverse="1">Expansion1</GameCoreInUse>
+      <GameCoreInUse inverse="1">Expansion2</GameCoreInUse>
+    </Criteria>
+    <Criteria id="Expansion1">
+      <GameCoreInUse>Expansion1</GameCoreInUse>
+    </Criteria>
+    <Criteria id="Expansion2">
+      <GameCoreInUse>Expansion2</GameCoreInUse>
+    </Criteria>
+  </ActionCriteria>
+</Mod>

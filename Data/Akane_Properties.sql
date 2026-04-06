@@ -1,0 +1,33 @@
+-- Task 5 Step 2: hidden property key contract used by Akane_Gameplay.lua.
+-- Civ6 scripted properties do not require schema rows; this file documents
+-- and centralizes the canonical property IDs used by gameplay and UI.
+--
+-- City property: once-per-city stage performance lock.
+-- AKANE_CITY_STAGE_PERFORMED
+--
+-- Player property: current empire-wide Art Prosperity stack count.
+-- AKANE_PLAYER_ART_PROSPERITY_STACKS
+--
+-- Player property: remaining empire-wide Art Prosperity turns.
+-- AKANE_PLAYER_ART_PROSPERITY_TURNS
+--
+-- Player property: total positive Art Prosperity stacks already attached.
+-- AKANE_PLAYER_ART_PROSPERITY_APPLIED_STACKS
+--
+-- Player property: historical expired Art Prosperity stacks.
+-- AKANE_PLAYER_ART_PROSPERITY_CLEARED_STACKS
+--
+-- Player property: total negative cleanup stacks already attached.
+-- AKANE_PLAYER_ART_PROSPERITY_NEG_APPLIED_STACKS
+--
+-- Unit property: remaining Stage Actor performances.
+-- AKANE_STAGE_ACTOR_CHARGES
+--
+-- Player property: currently active Akane mode.
+-- AKANE_MODE_CURRENT
+--
+-- Player property: bookkeeping for last successful switch turn.
+-- AKANE_MODE_LAST_SWITCH_TURN
+
+-- Player property: records the last switch that already displayed "cooldown ready" text.
+-- AKANE_MODE_LAST_READY_ALERT_SWITCH_TURN

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Context Name="AkaneDiplomacyOverlay">
+  <Container ID="OverlayRoot" Size="parent,parent" Hidden="1" ConsumeMouse="0">
+    <Image ID="BackgroundArt" Texture="AkaneDiplomacyBackground.dds" Anchor="C,C" Size="parent,parent" StretchMode="Fill" ConsumeMouse="0"/>
+    <Image ID="BottomMask" Texture="AkaneDiplomacyBottomMask.dds" Anchor="C,B" Size="parent,512" StretchMode="Fill" Offset="0,0" ConsumeMouse="0"/>
+    <Image ID="ForegroundArt" Texture="AkaneDiplomacyForeground.dds" Anchor="R,B" Size="1200,1200" Offset="0,0" StretchMode="ScaleMaintainingAspectRatio" ConsumeMouse="0"/>
+    <Container ID="HiddenLeaderAnchor" Anchor="L,T" Offset="-5000,-5000" Size="1,1" Hidden="1"/>
+  </Container>
+</Context>
