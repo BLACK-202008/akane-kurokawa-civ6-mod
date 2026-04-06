@@ -218,7 +218,7 @@ end
 
 local function GetSwitchGoldReward(playerID)
   local currentTurn = GetCurrentTurnNumber()
-  local standardReward = (currentTurn + 9) * 8
+  local standardReward = (currentTurn + 9) * 4
   local scaledReward = math.floor((standardReward * GetModeCooldownForCurrentGameSpeed()) / 10)
   local minimumReward = math.max(8, GetModeCooldownForCurrentGameSpeed())
   local finalReward = math.max(minimumReward, scaledReward)
