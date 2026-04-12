@@ -198,11 +198,11 @@
 
 ### 源码目录
 
-`C:\Users\oh_black\Desktop\code\new civi6 mod`
+`C:\Users\oh_black\Desktop\code\civi6_AkaneKurokawa_mod`
 
 ### 游戏测试目录
 
-`C:\Users\oh_black\Documents\My Games\Sid Meier's Civilization VI\Mods\new civi6 mod`
+`C:\Users\oh_black\Documents\My Games\Sid Meier's Civilization VI\Mods\civi6_AkaneKurokawa_mod`
 
 ### Civilization VI 日志目录
 

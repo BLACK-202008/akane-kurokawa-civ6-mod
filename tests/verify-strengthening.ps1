@@ -67,6 +67,7 @@ Expect-Match $modeSystem 'GrantSwitchGoldReward' 'Mode switch should grant a gol
 Expect-Match $modeSystem 'currentTurn \+ 9' 'Gold reward should scale with current turn plus 9.'
 Expect-Match $modeSystem '\* 4' 'Mode switch gold reward should now use half-strength scaling.'
 Expect-NotMatch $modeSystem '\(currentTurn \+ 9\) \* 8' 'Mode switch gold reward should no longer use the old full-strength scaling.'
+Expect-Match $modeSystem 'math\.min\(800,' 'Mode switch gold reward should be capped at 800.'
 
 Expect-Match $modifiers "\('AKANE_CAMPUS_SCIENCE_FROM_ADJACENT_LALALAI', 'MODIFIER_PLAYER_DISTRICTS_ADJUST_YIELD_CHANGE', 'AKANE_DISTRICT_IS_CAMPUS_AND_ADJ_LALALAI'\)" 'Leader base ability should add science to Campuses adjacent to LALALAI.'
 Expect-Match $modifiers "\('AKANE_CAMPUS_SCIENCE_FROM_ADJACENT_LALALAI', 'YieldType', 'YIELD_SCIENCE'\)" 'Adjacent Campus bonus should grant science.'

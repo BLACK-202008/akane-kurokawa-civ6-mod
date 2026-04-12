@@ -2,7 +2,7 @@
 
 ## 适用范围
 
-- 项目：`new civi6 mod`
+- 项目：`civi6_AkaneKurokawa_mod`
 - 场景：领袖图标/静态肖像接入后，前端显示异常或游戏启动崩溃
 
 ---
@@ -62,7 +62,7 @@
 
 2. 配置链路修复
 - 新增 `Data/Akane_Config.sql`，使用 `INSERT OR REPLACE` 写入 `Players` 与 `PlayerItems`
-- `AkaneKurokawa.modinfo` 的 `FrontEndActions` 改为加载 `Akane_Config.sql`
+- `civi6_AkaneKurokawa_mod.modinfo` 的 `FrontEndActions` 改为加载 `Akane_Config.sql`
 
 3. 图标链路修复
 - `Icons/Akane_Icons.xml`：
@@ -80,7 +80,7 @@
 
 1. 先确认日志是否来自 `AppData` 路径。
 2. 看 `Modding.log`：
-- 是否出现 `Loading Mod ... AkaneKurokawa.modinfo`
+- 是否出现 `Loading Mod ... civi6_AkaneKurokawa_mod.modinfo`
 - 是否出现 `ModdingUpdateConfigurationDatabase - Loading Data/Akane_Config...`
 - 是否出现 `UpdateIcons - Loading Icons/Akane_Icons.xml`
 3. 查 `DebugConfiguration.sqlite`：
@@ -101,5 +101,4 @@
 - 不要只改 `Icons.xml` 不导入纹理文件。
 - 不要只改 `Data/Akane_Config.xml` 却不验证配置库中是否真的有行。
 - 每一大轮修改后，**先同步到测试目录再测**：
-  - `C:\Users\oh_black\Documents\My Games\Sid Meier's Civilization VI\Mods\new civi6 mod`
-
+  - `C:\Users\oh_black\Documents\My Games\Sid Meier's Civilization VI\Mods\civi6_AkaneKurokawa_mod`
