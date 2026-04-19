@@ -34,6 +34,8 @@
 
   <District_CitizenYieldChanges>
     <Row DistrictType="DISTRICT_LALALAI_TROUPE" YieldType="YIELD_CULTURE" YieldChange="2"/>
+    <Row DistrictType="DISTRICT_LALALAI_TROUPE" YieldType="YIELD_FOOD" YieldChange="2"/>
+    <Row DistrictType="DISTRICT_LALALAI_TROUPE" YieldType="YIELD_PRODUCTION" YieldChange="1"/>
   </District_CitizenYieldChanges>
 
   <District_GreatPersonPoints>

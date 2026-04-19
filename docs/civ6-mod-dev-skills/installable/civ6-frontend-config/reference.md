@@ -158,6 +158,28 @@ WHERE InheritFrom = 'LEADER_DEFAULT'
 
 ---
 
+## 前端参数与文本的拆分策略（来自 TXHBalance 双重构）
+
+`TXHBalance` 的两种重构都说明：前端配置至少要区分“参数定义”和“给玩家看的文本”，至于是合并还是分文件，取决于复用范围。
+
+### 推荐判断
+
+| 内容 | 推荐放法 | 原因 |
+|------|------|------|
+| 参数定义本体，例如 `Parameters`、`DomainValues`、`ParameterCriteria` | 单独放 `Config/` 或子系统自己的 `Config/` | 这部分是结构化前端配置，不应和大量通用文本混在一起 |
+| 只服务前端选项页的说明文字 | 可独立成 `text_bcy_frontend.xml` 一类文件 | 前端语义清楚，后续搜索配置文案更快 |
+| 同时用于前端与游戏内的共享文本 | 可以并入主题性 text 文件，例如 `balance_text.xml`，再分别挂到 FE / InGame action | 避免同一段文本维护两份 |
+| 兼容特定模组的前端文本 | 单独放 `Compat/Text/` | 条件加载明确，避免污染基础文本包 |
+
+### 实操规则
+
+1. 参数表和文本表即使最后放在同一个子系统目录里，也要保持独立文件。
+2. 如果某个前端子系统本身就是独立功能块，例如 BCY 选项，把它的 `Config`、文本、桥接 UI 放在同一子系统目录最清楚。
+3. 如果文本需要同时在前端和游戏内出现，优先复用同一个 text 文件，而不是复制两份内容。
+4. 如果按文件类型集中目录，至少保证文件名前缀能看出前端归属，例如 `text_bcy_frontend.xml`，不要出现含义模糊的 `text_misc.xml`。
+
+---
+
 ## 最小工作流
 
 1. 前端配置优先单独建 `Config.sql`，写 `Players` 与 `PlayerItems`，覆盖三个 domain
@@ -183,6 +205,9 @@ WHERE InheritFrom = 'LEADER_DEFAULT'
 
 - `Data/Akane_Config.sql` - Players/PlayerItems 完整示例
 - `Icons/Akane_Icons.xml` - 多尺寸 atlas、IconDefinitions、IconAliases
+
+- `TXHBalance/BCY/Config/options.xml` - 参数定义和 DomainValues 独立成前端配置文件
+- `TXHBalance/Text/text_bcy_frontend.xml` 与 `Balance/Text/balance_text.xml` - 前端文案独立 vs 主题性合并两种做法
 
 ## 社区参照
 

@@ -182,6 +182,33 @@ local x, y = unit:GetX(), unit:GetY()
 
 ---
 
+## 入口脚本与子模块拆分（来自 TXHBalance 双重构）
+
+`TXHBalance` 的两份整理验证了一个很实用的模式：**对 Civ6 来说，最稳的是“单入口注册事件，内部再决定是否拆模块”**。
+
+### 可行结构
+
+| 结构 | 样例 | 适合 |
+|------|------|------|
+| 单文件实现 | `Scripts/txh_bcy_gameplay.lua` 包含状态、查询、事件注册、处理流程 | 逻辑集中、模块不大、担心运行时 include/路径问题 |
+| 单入口 + 子模块 | `Scripts/txh_bcy_gameplay.lua` 作为入口，`BCY/Scripts/bcy_init.lua`、`bcy_lookup.lua`、`bcy_city_built.lua`、`bcy_recalculate.lua` 承担细分职责 | 运行时逻辑持续扩张，需要把“初始化 / 查询 / 事件处理 / 重算”分开维护 |
+
+### 推荐规则
+
+1. 只有入口脚本负责注册 `GameEvents`、建立 `ExposedMembers`、读取总配置。
+2. 子模块只暴露命名空间函数或纯逻辑函数，不在模块顶层偷偷注册事件。
+3. `GameConfiguration` key、Property key、Lua 要附加的 modifier id 命名集中管理，避免分散在多个文件里。
+4. 如果 SQL 里预生成了运行时要附加的 modifier，Lua 侧调用名必须和 SQL 生成规则严格同构。
+5. 如果你为了稳定性把逻辑并回单文件，也应保留明确的小节边界：状态区、查表区、计算区、事件处理区、初始化区。
+
+### 什么时候该拆模块
+
+- 需要同时处理“初始化缓存”“城市建立逻辑”“动态重算”“UI 桥接”四类职责时，应该拆。
+- 只是一个短生命周期效果、事件很少、没有跨回合状态时，单文件通常更省心。
+- 一旦你发现为了复用而频繁复制 `FindPositions`、`CalculateBaseYield`、`RestoreState` 之类辅助函数，就该提取子模块。
+
+---
+
 ## 最小工作流
 
 1. 定义清楚状态挂在哪：`City`、`Player`、`Unit` 各自保存什么属性
@@ -209,6 +236,9 @@ local x, y = unit:GetX(), unit:GetY()
 
 - `Scripts/Akane_Gameplay.lua` - 单位演出、城市触发、全国 Buff
 - `Scripts/Akane_ModeSystem.lua` - 模式冷却、金钱奖励、ExposedMembers
+
+- `TXHBalance/Scripts/txh_bcy_gameplay.lua` - 单入口脚本的稳定基线
+- `TXHBalance/BCY/Scripts/*.lua` - 按职责拆分的子模块化运行时结构
 
 ## 社区参照
 

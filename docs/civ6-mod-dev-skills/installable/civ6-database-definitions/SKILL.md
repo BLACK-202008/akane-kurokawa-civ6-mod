@@ -20,7 +20,9 @@ description: Use when editing Civilization VI gameplay data in XML or SQL, espec
 - 新内容顺序：`Types -> 主表 -> TypeTags/AIInfos/Upgrades -> Modifiers/Requirements -> 文本`
 - 修改原版多用 `SQL`
 - 声明新行多用 `XML`
-- 每次改单位时同步检查 UU/UB/UD 和描述文本
+- 改单位时同步检查对应 UU、升级链和描述文本
+- 改建筑时同步检查对应 UB 和描述文本
+- 改区域时同步检查对应 UD 和描述文本
 
 ## Implementation
 

@@ -182,6 +182,31 @@
 
 ---
 
+## 目录组织策略（来自 TXHBalance 双重构）
+
+`TXHBalance` 的两份整理结果说明了一点：目录结构服务的是“人类维护”，真正决定加载结果的仍然是 `.modinfo`。当前验证过两种都可长期维护的组织方式：
+
+| 策略 | 典型目录 | 优点 | 风险 | 适用 |
+|------|------|------|------|------|
+| 按子系统/加载阶段分层 | `Balance/Database`、`Balance/Text`、`BCY/Config`、`BCY/Database`、`BCY/Scripts`、`NewUnits/Database/UI/Text`、`Compat/Text` | 子系统边界清楚；更容易让目录结构直接映射到 `FrontEndActions` / `InGameActions`；适合整合型大模组 | 目录层级更深；跨子系统搜索时要多跳几层 | 一个模组里同时有平衡、配置、运行时 Lua、新单位、兼容补丁 |
+| 按文件类型集中，由 `.modinfo` 显式编排 | `SQL/`、`Text/`、`XML/`、`Config/`、`BCY/`、`Scripts/` | 全局按类型检索快；中等体量模组更直观；迁移旧项目成本低 | 语义主要落在文件名与 action id 上；规模变大后更容易出现“一个目录装太多主题” | 规则集中、模块数不多、维护者更习惯按 SQL/XML/Text 分类 |
+
+### 推荐混合做法
+
+1. 先按“是否是独立子系统”拆第一层，例如 `BCY`、`NewUnits`、`Compat`。
+2. 子系统内部再按文件类型拆第二层，例如 `Database` / `Text` / `UI` / `Scripts`。
+3. 如果一个子系统体量很小，可以退化成 `SQL/`、`Text/`、`XML/` 的扁平结构，但要把语义写进文件名和 action id。
+4. 不要把目录名当成加载顺序本身；顺序仍由 `.modinfo` 的 action 排列和 `LoadOrder` 明确声明。
+5. 兼容补丁、前端配置、运行时支持这三类内容，最好始终独立于“主平衡文件”。
+
+### `.modinfo` 与目录命名的映射规则
+
+- 如果目录是按子系统拆的，`UpdateDatabase` / `UpdateText` id 也应体现子系统名，例如 `TXHBalance_BCY_CoreRules`、`TXHBalance_Balance_EconomyAndInfrastructure`。
+- 如果目录是按文件类型拆的，文件名本身必须承载主题，例如 `units_balance.sql`、`text_civs_leaders.xml`，不要出现 `part1.sql`、`misc2.xml` 这类无语义名字。
+- `<Files>` 建议与 action 的分组顺序保持接近，这样 diff 时更容易看出“哪个子系统少列了文件”。
+
+---
+
 ## 最小工作流
 
 1. 把内容按运行阶段拆开：配置库/前端文本/前端图标/前端贴图走 `FrontEndActions`，Gameplay 数据/Lua/UI/ArtDef 走 `InGameActions`
@@ -208,6 +233,9 @@
 
 - `civi6_AkaneKurokawa_mod.modinfo` - 完整的前后端分离、三套 ReplaceUIScript、ActionCriteria
 - `TXHBalance.modinfo` - 轻量级平衡模组，最小化配置
+
+- `TXHBalance`（codex 版）- 目录按子系统和阶段分层，适合整合型模组
+- `TXHBalance`（opus 版）- 目录按文件类型集中，依赖 `.modinfo` action id 和文件名表达语义
 
 ## 社区参照
 

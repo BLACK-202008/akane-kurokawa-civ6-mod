@@ -4,7 +4,11 @@ local AKANE_EVENT_STAGE_PERFORM = "AKANE_STAGE_ACTOR_PERFORM"
 local AKANE_UNIT_STAGE_ACTOR = "UNIT_STAGE_ACTOR"
 local AKANE_DISTRICT_LALALAI = "DISTRICT_LALALAI_TROUPE"
 local AKANE_LOG_PREFIX = "[Akane Task5 Gameplay]"
+local AKANE_LEADER_TYPE = "LEADER_KUROKAWA_AKANE"
 local MODIFIER_CITY_STAGE_LEGACY_CULTURE = "AKANE_CITY_STAGE_LEGACY_CULTURE"
+local PROPERTY_MODE_CURRENT = "AKANE_MODE_CURRENT"
+local MODE_NONE = "MODE_NONE"
+local MODE_ACTOR = "MODE_ACTOR"
 local STAGE_REWARD_MODIFIERS = {
   MODIFIER_CITY_STAGE_LEGACY_CULTURE,
   "AKANE_CITY_STAGE_AMPHITHEATER_CULTURE",
@@ -35,7 +39,8 @@ local ART_PROSPERITY_MODIFIERS_NEGATIVE = {
   "AKANE_ART_PROSPERITY_CULTURE_NEGATIVE",
   "AKANE_ART_PROSPERITY_FAITH_NEGATIVE"
 }
-local ART_PROSPERITY_TURN_EXTENSION = 20
+local ART_PROSPERITY_STANDARD_TURN_EXTENSION = 25
+local ART_PROSPERITY_STANDARD_TURN_CAP = 100
 local STAGE_ACTOR_MAX_CHARGES = 3
 
 local PROPERTY_CITY_STAGE_PERFORMED = "AKANE_CITY_STAGE_PERFORMED"
@@ -60,6 +65,62 @@ local function ToInt(v)
     return 0
   end
   return tonumber(v) or 0
+end
+
+local function IsAkanePlayer(playerID)
+  local playerConfig = PlayerConfigurations[playerID]
+  if playerConfig == nil then
+    return false
+  end
+  return playerConfig:GetLeaderTypeName() == AKANE_LEADER_TYPE
+end
+
+local function GetCurrentMode(pPlayer)
+  if pPlayer == nil then
+    return MODE_NONE
+  end
+
+  local currentMode = pPlayer:GetProperty(PROPERTY_MODE_CURRENT)
+  if currentMode == nil then
+    return MODE_NONE
+  end
+  return tostring(currentMode)
+end
+
+local function GetModeCooldownForCurrentGameSpeed()
+  local modeAPI = ExposedMembers ~= nil and ExposedMembers.AkaneModeSystem or nil
+  if modeAPI ~= nil and modeAPI.GetModeCooldownForCurrentGameSpeed ~= nil then
+    return modeAPI.GetModeCooldownForCurrentGameSpeed()
+  end
+
+  local speedRow = GameInfo.GameSpeeds[GameConfiguration.GetGameSpeedType()]
+  local speedType = speedRow and speedRow.GameSpeedType or "GAMESPEED_STANDARD"
+
+  if speedType == "GAMESPEED_ONLINE" then
+    return 5
+  end
+  if speedType == "GAMESPEED_QUICK" then
+    return 7
+  end
+  if speedType == "GAMESPEED_EPIC" then
+    return 15
+  end
+  if speedType == "GAMESPEED_MARATHON" then
+    return 20
+  end
+  return 10
+end
+
+local function GetScaledArtProsperityTurns(standardTurns)
+  return math.max(1, math.floor((standardTurns * GetModeCooldownForCurrentGameSpeed()) / 10))
+end
+
+local function GetArtProsperityTurnExtensionForCurrentGameSpeed()
+  return GetScaledArtProsperityTurns(ART_PROSPERITY_STANDARD_TURN_EXTENSION)
+end
+
+local function GetArtProsperityTurnCapForCurrentGameSpeed()
+  return GetScaledArtProsperityTurns(ART_PROSPERITY_STANDARD_TURN_CAP)
 end
 
 local function ResolveStagePerformUnitID(playerID, unitIDOrParams)
@@ -234,6 +295,76 @@ local function GetPlayerAnchorCity(pPlayer)
   return nil
 end
 
+local function GetWorldTextLocationForUnitOrPlayer(pPlayer, unitID)
+  if pPlayer ~= nil and unitID ~= nil and unitID >= 0 then
+    local pUnits = pPlayer:GetUnits()
+    if pUnits ~= nil then
+      local pUnit = pUnits:FindID(unitID)
+      if pUnit ~= nil then
+        return pUnit:GetX(), pUnit:GetY()
+      end
+    end
+  end
+
+  local pCity = GetPlayerAnchorCity(pPlayer)
+  if pCity ~= nil then
+    return pCity:GetX(), pCity:GetY()
+  end
+
+  return nil, nil
+end
+
+local function GrantRandomActorModeEureka(playerID, unitID)
+  local pPlayer = Players[playerID]
+  if pPlayer == nil or not pPlayer:IsAlive() or not IsAkanePlayer(playerID) then
+    return
+  end
+  if GetCurrentMode(pPlayer) ~= MODE_ACTOR then
+    return
+  end
+
+  local pTechs = pPlayer:GetTechs()
+  if pTechs == nil or pTechs.TriggerBoost == nil or pTechs.HasTech == nil or pTechs.HasBoostBeenTriggered == nil or pTechs.CanResearch == nil then
+    Log("actor eureka skipped: player tech API unavailable playerID=" .. tostring(playerID))
+    return
+  end
+
+  local eligibleTechs = {}
+  for tech in GameInfo.Technologies() do
+    local techIndex = tech.Index
+    local canTrigger = true
+    if pTechs.CanTriggerBoost ~= nil then
+      canTrigger = pTechs:CanTriggerBoost(techIndex)
+    end
+
+    if pTechs:CanResearch(techIndex) and not pTechs:HasTech(techIndex) and not pTechs:HasBoostBeenTriggered(techIndex) and canTrigger then
+      table.insert(eligibleTechs, tech)
+    end
+  end
+
+  if #eligibleTechs == 0 then
+    Log("actor eureka skipped: no currently researchable techs playerID=" .. tostring(playerID))
+    return
+  end
+
+  local randomIndex = Game.GetRandNum(#eligibleTechs, "Akane Actor Mode Random Eureka") + 1
+  local tech = eligibleTechs[randomIndex]
+  pTechs:TriggerBoost(tech.Index)
+
+  local x, y = GetWorldTextLocationForUnitOrPlayer(pPlayer, unitID)
+  if x ~= nil and y ~= nil then
+    Game.AddWorldViewText(
+      playerID,
+      Localize("LOC_AKANE_MODE_ACTOR_EUREKA_WORLD_TEXT", Locale.Lookup(tech.Name)),
+      x,
+      y,
+      0
+    )
+  end
+
+  Log("actor eureka granted playerID=" .. tostring(playerID) .. ", tech=" .. tostring(tech.TechnologyType))
+end
+
 local function UpdateArtProsperityWorldText(pPlayer, pSourceCity, stacks, turns, textTag)
   local pCity = pSourceCity or GetPlayerAnchorCity(pPlayer)
   if pCity == nil then
@@ -323,9 +454,11 @@ local function GrantArtProsperityFromPerformance(pPlayer, pSourceCity)
 
   local currentStacks = ToInt(pPlayer:GetProperty(PROPERTY_PLAYER_ART_STACKS))
   local currentTurns = ToInt(pPlayer:GetProperty(PROPERTY_PLAYER_ART_TURNS))
+  local turnExtension = GetArtProsperityTurnExtensionForCurrentGameSpeed()
+  local maxTurns = GetArtProsperityTurnCapForCurrentGameSpeed()
 
   local newStacks = currentStacks + 1
-  local newTurns = currentTurns + ART_PROSPERITY_TURN_EXTENSION
+  local newTurns = math.min(maxTurns, currentTurns + turnExtension)
   pPlayer:SetProperty(PROPERTY_PLAYER_ART_STACKS, newStacks)
   pPlayer:SetProperty(PROPERTY_PLAYER_ART_TURNS, newTurns)
 
@@ -409,6 +542,10 @@ function OnPlayerTurnStarted(playerID, _turnNumber)
   end
 end
 
+function OnUnitGreatPersonActivated(playerID, unitID, _greatPersonClass, _greatPersonType)
+  GrantRandomActorModeEureka(playerID, unitID)
+end
+
 function AKANE_STAGE_ACTOR_PERFORM(playerID, unitIDOrParams)
   local unitID, requestSource = ResolveStagePerformUnitID(playerID, unitIDOrParams)
   Log("event received: source=" .. tostring(requestSource) .. ", playerID=" .. tostring(playerID) .. ", unitID=" .. tostring(unitID))
@@ -471,3 +608,10 @@ RestoreStageLegacyCultureModifiers()
 RestoreArtProsperityModifiers()
 GameEvents[AKANE_EVENT_STAGE_PERFORM].Add(AKANE_STAGE_ACTOR_PERFORM)
 GameEvents.PlayerTurnStarted.Add(OnPlayerTurnStarted)
+if Events ~= nil and Events.UnitGreatPersonActivated ~= nil then
+  Events.UnitGreatPersonActivated.Add(OnUnitGreatPersonActivated)
+elseif GameEvents ~= nil and GameEvents.UnitGreatPersonActivated ~= nil then
+  GameEvents.UnitGreatPersonActivated.Add(OnUnitGreatPersonActivated)
+elseif GameEvents ~= nil and GameEvents.OnGreatPersonActivated ~= nil then
+  GameEvents.OnGreatPersonActivated.Add(OnUnitGreatPersonActivated)
+end

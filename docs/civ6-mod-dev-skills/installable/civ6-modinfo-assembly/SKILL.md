@@ -22,6 +22,13 @@ description: Use when building or editing a Civilization VI mod and deciding how
 - 所有被 action 使用的文件都必须先列在 `<Files>`
 - 高 `LoadOrder` 主要留给 UI 替换冲突，不要默认全抬高
 
+## Skill Routing
+
+- 如果拿不准文件该进哪个 action、哪个阶段加载、是否需要 `ActionCriteria`，先从这个 skill 开始
+- 如果已经确定是前端配置链问题，例如 `Players`、`PlayerItems`、`LoadingInfo`、图标或前端参数，转到 `civ6-frontend-config`
+- 如果已经确定是单位、建筑、Modifier、Requirement、数值或文本同步问题，转到 `civ6-database-definitions`
+- 如果已经确定要做运行时状态、事件触发、读档恢复或 UI 调 gameplay，转到 `civ6-gameplay-lua`
+
 ## Implementation
 
 - 完整参考见 [reference.md](reference.md)

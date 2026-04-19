@@ -17,7 +17,7 @@ description: Use when a Civilization VI mod affects leader select, loading scree
 
 ## Quick Reference
 
-- 配置数据库优先单独放 `Config.sql`
+- 前端配置优先单独放 `Config` 文件；结构化参数常用 XML，配置表改写也可用 SQL
 - `Players`/`PlayerItems` 要覆盖 `Standard/Expansion1/Expansion2`
 - 纹理文件名显式写成 `Textures/...dds`
 - 缺加载页信息时直接查 `LoadingInfo`

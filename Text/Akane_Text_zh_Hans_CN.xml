@@ -7,11 +7,11 @@
     <Row Tag="LOC_LEADER_KUROKAWA_AKANE_NAME" Language="zh_Hans_CN"><Text>黑川茜</Text></Row>
     <Row Tag="LOC_LOADING_INFO_LEADER_KUROKAWA_AKANE" Language="zh_Hans_CN"><Text>以舞台观察与角色理解见长的黑川茜，不仅拥有强大的“推理能力”，还能随时扮演星野爱、鞘姬、星野露比三个角色，通过不同的角色组合把文化、信仰、科技、生产与战斗优势导向当前最需要的方向。</Text></Row>
     <Row Tag="LOC_TRAIT_CIVILIZATION_LALALAI_NAME" Language="zh_Hans_CN"><Text>多面舞台术</Text></Row>
-    <Row Tag="LOC_TRAIT_CIVILIZATION_LALALAI_DESCRIPTION" Language="zh_Hans_CN"><Text>LALALAI 剧团会为相邻专业区域提供额外相邻加成，并使相关建筑产出提高 +20%。与 LALALAI 剧团相邻的学院、商业中心、港口、军营与圣地还会额外提供对应伟人点数。话剧演员演出后会触发可叠加的全国“艺术繁荣”，持续强化全国城市的区域产出。</Text></Row>
+    <Row Tag="LOC_TRAIT_CIVILIZATION_LALALAI_DESCRIPTION" Language="zh_Hans_CN"><Text>LALALAI 剧团会为相邻专业区域提供额外相邻加成，并使相关建筑产出提高 +50%。与 LALALAI 剧团相邻的学院、商业中心、港口、军营与圣地会额外提供对应伟人点数，且会随着这些区域的建筑等级继续提高。话剧演员演出后会触发可叠加的全国“艺术繁荣”，持续强化全国城市的区域产出。</Text></Row>
     <Row Tag="LOC_TRAIT_LEADER_KUROKAWA_AKANE_NAME" Language="zh_Hans_CN"><Text>角色掌控者</Text></Row>
-    <Row Tag="LOC_TRAIT_LEADER_KUROKAWA_AKANE_DESCRIPTION" Language="zh_Hans_CN"><Text>黑川茜拥有“推理大师”特质：始终提供 +1 [ICON_Culture] 文化值；与 LALALAI 剧团相邻的学院额外获得 +1 [ICON_Science] 科技值；在解锁“数学”后额外获得 +10% [ICON_Science] 科技值。此外，黑川茜可随时选择扮演星野爱、鞘姬、星野露比三个角色其中之一。每次切换会立刻改变加成方向（标准速度冷却为10回合），并在当前游戏速度冷却时长的一半期间提供全产出 +8%，同时获得一笔按回合数成长的金币奖励。</Text></Row>
+    <Row Tag="LOC_TRAIT_LEADER_KUROKAWA_AKANE_DESCRIPTION" Language="zh_Hans_CN"><Text>黑川茜拥有“推理大师”特质：始终提供 +1 [ICON_Culture] 文化值；与 LALALAI 剧团相邻的学院额外获得 +1 [ICON_Science] 科技值；在解锁“数学”后额外获得 +10% [ICON_Science] 科技值，在解锁“科学理论”后额外再获得 +15% [ICON_Science] 科技值。此外，黑川茜可随时选择扮演星野爱、鞘姬、星野露比三个角色其中之一。每次切换会立刻改变加成方向（标准速度冷却为10回合），并在当前游戏速度冷却时长的一半期间提供全产出 +15%，同时获得一笔按回合数成长的金币奖励。</Text></Row>
     <Row Tag="LOC_DISTRICT_LALALAI_TROUPE_NAME" Language="zh_Hans_CN"><Text>LALALAI 剧团</Text></Row>
-    <Row Tag="LOC_DISTRICT_LALALAI_TROUPE_DESCRIPTION" Language="zh_Hans_CN"><Text>替代剧院广场的特色区域。提供 +2 [ICON_Culture] 文化值与 +2 宜居度；每相邻一个市中心或奇观额外获得 +2 [ICON_Gold] 金币；并为相邻的商业中心与港口提供 +1 [ICON_Gold] 金币、学院提供 +1 [ICON_Science] 科技值、军营与工业区提供 +1 [ICON_Production] 生产力、圣地区域提供 +1 [ICON_Faith] 信仰值。</Text></Row>
+    <Row Tag="LOC_DISTRICT_LALALAI_TROUPE_DESCRIPTION" Language="zh_Hans_CN"><Text>替代剧院广场的特色区域。提供 +2 [ICON_Culture] 文化值与 +2 宜居度；每相邻一个市中心或奇观额外获得 +2 [ICON_Gold] 金币；并为相邻的商业中心与港口提供 +1 [ICON_Gold] 金币、学院提供 +1 [ICON_Science] 科技值、军营与工业区提供 +1 [ICON_Production] 生产力、圣地区域提供 +1 [ICON_Faith] 信仰值。该区域每个专家额外提供 +2 [ICON_Food] 食物与 +1 [ICON_Production] 生产力。</Text></Row>
     <Row Tag="LOC_UNIT_STAGE_ACTOR_NAME" Language="zh_Hans_CN"><Text>话剧演员</Text></Row>
     <Row Tag="LOC_UNIT_STAGE_ACTOR_DESCRIPTION" Language="zh_Hans_CN"><Text>黑川茜专属的特色平民单位，拥有 3 次演出机会。每次能在一座己方城市的 LALALAI 剧团进行演出，同一城市限一次，为城市带来永久文化成长，并在最后一次演出后退场。</Text></Row>
     <Row Tag="LOC_AKANE_STAGE_ACTOR_PERFORM_NAME" Language="zh_Hans_CN"><Text>舞台演出</Text></Row>
@@ -33,11 +33,12 @@
     <Row Tag="LOC_AKANE_MODE_AI_NAME" Language="zh_Hans_CN"><Text>星野爱</Text></Row>
     <Row Tag="LOC_AKANE_MODE_ACTOR_NAME" Language="zh_Hans_CN"><Text>鞘姬</Text></Row>
     <Row Tag="LOC_AKANE_MODE_WARRIOR_NAME" Language="zh_Hans_CN"><Text>星野露比</Text></Row>
-    <Row Tag="LOC_AKANE_MODE_AI_TOOLTIP" Language="zh_Hans_CN"><Text>切换为星野爱的角色定位。获得 +1 [ICON_Faith] 信仰值；大预言家点数为固定 +1，且每个圣地区域额外 +1；并使 [ICON_Faith] 信仰值额外提高 +30%。切换成功后，还会在当前冷却回合数的一半期间获得全产出 +8%，并额外获得一笔按回合数成长的金币。</Text></Row>
-    <Row Tag="LOC_AKANE_MODE_ACTOR_TOOLTIP" Language="zh_Hans_CN"><Text>切换为鞘姬的角色定位。获得 +1 [ICON_Culture] 文化值；大艺术家点数为固定 +1，且每个 LALALAI 剧团额外 +1；使 [ICON_Culture] 文化值额外提高 +20%，并使旅游业绩提高 +30%。切换成功后，还会在当前冷却回合数的一半期间获得全产出 +8%，并额外获得一笔按回合数成长的金币。</Text></Row>
-    <Row Tag="LOC_AKANE_MODE_WARRIOR_TOOLTIP" Language="zh_Hans_CN"><Text>切换为星野露比的角色定位。获得 +5 [ICON_Strength] 战斗力、+20% 经验值；大将军点数为固定 +1，且每个军营区域额外 +1；并使 [ICON_Production] 生产力额外提高 +20%。切换成功后，还会在当前冷却回合数的一半期间获得全产出 +8%，并额外获得一笔按回合数成长的金币。</Text></Row>
+    <Row Tag="LOC_AKANE_MODE_AI_TOOLTIP" Language="zh_Hans_CN"><Text>切换为星野爱的角色定位。获得 +1 [ICON_Faith] 信仰值；大预言家点数为固定 +1，且每个圣地区域额外 +1；使 [ICON_Faith] 信仰值额外提高 +30%；并使所有宗教单位在宗教战斗中获得 +10 战斗力。切换成功后，还会在当前冷却回合数的一半期间获得全产出 +15%，并额外获得一笔按回合数成长的金币。</Text></Row>
+    <Row Tag="LOC_AKANE_MODE_ACTOR_TOOLTIP" Language="zh_Hans_CN"><Text>切换为鞘姬的角色定位。获得 +1 [ICON_Culture] 文化值；大艺术家点数为固定 +1，且每个 LALALAI 剧团额外 +1；使 [ICON_Culture] 文化值额外提高 +20%，并使旅游业绩提高 +30%。每次伟人隐退时，额外获得一个随机尤里卡。切换成功后，还会在当前冷却回合数的一半期间获得全产出 +15%，并额外获得一笔按回合数成长的金币。</Text></Row>
+    <Row Tag="LOC_AKANE_MODE_WARRIOR_TOOLTIP" Language="zh_Hans_CN"><Text>切换为星野露比的角色定位。获得 +5 [ICON_Strength] 战斗力、所有单位 +1 移动力；大将军点数为固定 +1，且每个军营区域额外 +1；并使 [ICON_Production] 生产力额外提高 +20%。切换成功后，还会在当前冷却回合数的一半期间获得全产出 +15%，并额外获得一笔按回合数成长的金币。</Text></Row>
+    <Row Tag="LOC_AKANE_MODE_ACTOR_EUREKA_WORLD_TEXT" Language="zh_Hans_CN"><Text>鞘姬模式触发：获得随机尤里卡 {1}。</Text></Row>
     <Row Tag="LOC_AKANE_MODE_WARRIOR_COMBAT_SOURCE" Language="zh_Hans_CN"><Text>星野露比：+5 战斗力。</Text></Row>
-    <Row Tag="LOC_AKANE_MODE_SWITCHED" Language="zh_Hans_CN"><Text>已切换为 {1}。当前模式进入冷却，还需等待 {2_num} 回合；全产出 +8% 将持续 {3_num} 回合，并立即获得 {4_num} [ICON_Gold] 金币。</Text></Row>
+    <Row Tag="LOC_AKANE_MODE_SWITCHED" Language="zh_Hans_CN"><Text>已切换为 {1}。当前模式进入冷却，还需等待 {2_num} 回合；全产出 +15% 将持续 {3_num} 回合，并立即获得 {4_num} [ICON_Gold] 金币。</Text></Row>
     <Row Tag="LOC_AKANE_MODE_COOLDOWN_ACTIVE" Language="zh_Hans_CN"><Text>当前无法切换模式，还需等待 {1_num} 回合。</Text></Row>
     <Row Tag="LOC_AKANE_MODE_ALREADY_ACTIVE" Language="zh_Hans_CN"><Text>{1} 已处于激活状态。</Text></Row>
     <Row Tag="LOC_AKANE_MODE_NOT_AVAILABLE" Language="zh_Hans_CN"><Text>该玩家当前不可使用黑川茜模式切换。</Text></Row>

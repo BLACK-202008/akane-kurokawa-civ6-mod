@@ -158,6 +158,34 @@ INSERT INTO RequirementArguments(RequirementId, Name, Value)
 
 ---
 
+## 文件拆分与命名粒度（来自 TXHBalance 双重构）
+
+两份 `TXHBalance` 的共同结论是：SQL/XML 的拆分粒度应该围绕“规则主题”和“依赖链”设计，而不是按文件大小随手切。
+
+### 两种稳定拆法
+
+| 策略 | 样例 | 优点 | 适用 |
+|------|------|------|------|
+| 主题顺序化拆分 | `01_units_and_prereqs.sql`、`02_siege_rules_and_policies.sql`、`03_economy_and_infrastructure.sql` | 一眼能看出执行顺序和主题边界；适合大型整合平衡包 | 需要严格控制编号与职责 |
+| 类型目录下语义文件名 | `SQL/units_balance.sql`、`SQL/buildings_districts.sql`、`Text/text_civs_leaders.xml` | 文件名直接表达改动对象；中等模组维护成本低 | `.modinfo` 要承担更多编排职责 |
+
+### 拆分规则
+
+1. 一个数据库文件只负责一个“可描述的变更集”，例如“攻城规则”“经济与基础设施”“运行时支持对象生成”。
+2. 如果某段 SQL 只是给 Lua 预生成 modifier、requirement、辅助表，单独拆为 `runtime_support` 一类文件，不要混进主平衡数值文件。
+3. 基础规则、兼容补丁、前端参数、文本描述分开存放；不要把兼容模组覆盖文本塞回主文本文件。
+4. 如果改动会同时触发“基准单位”和“对应 UU/UB/UD”连锁检查，尽量放在同一主题文件里，避免漏改。
+5. 文件名要能直接映射到 `.modinfo` 的 action id；看到文件名就应知道它为什么存在。
+
+### 文本拆分规则
+
+- 文本可以按主题合并成一个 `balance_text.xml`，前提是这批文本都属于同一套平衡包并且通常一起加载。
+- 文本也可以按对象拆成 `text_buildings_improvements.xml`、`text_civs_leaders.xml`、`text_new_units.xml`；这种更适合按类型集中的目录结构。
+- 兼容文本始终独立，例如 `pen_wonder_compat.xml`；它的加载条件应由 `.modinfo` 显式控制。
+- 前端专用文本如果只服务配置菜单，可以单独成文件；如果同一批文本既要前端显示又要游戏内显示，可以复用同一个 text 文件并分别挂到两个 action。
+
+---
+
 ## 最小工作流
 
 1. 判断是"声明新行"还是"修改旧行"：新内容优先 XML，修改用 SQL
@@ -185,6 +213,9 @@ INSERT INTO RequirementArguments(RequirementId, Name, Value)
 - `Data/Akane_Units.xml` - 新单位最小定义
 - `Data/Akane_Modifiers.sql` - 复杂 Modifier/Requirement 链
 - `TXHBalance/database.sql` - 大批量 UPDATE 和 INSERT OR IGNORE
+
+- `TXHBalance/Balance/Database/*.sql` - 按主题和执行顺序拆分的整合型平衡文件
+- `TXHBalance/SQL/*.sql` 与 `TXHBalance/Text/*.xml` - 按文件类型集中、由命名表达主题的轻量重构
 
 ## 社区参照
 
