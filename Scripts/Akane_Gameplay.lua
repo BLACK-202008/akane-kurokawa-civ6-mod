@@ -21,6 +21,19 @@ local STAGE_REWARD_MODIFIERS = {
   "AKANE_CITY_STAGE_ARCHAEOLOGICAL_MUSEUM_TOURISM_ALL",
   "AKANE_CITY_STAGE_BROADCAST_CENTER_TOURISM_ALL"
 }
+local STAGE_ADJACENCY_MODIFIERS = {
+  "AKANE_CITY_STAGE_LALALAI_CULTURE_BONUS",
+  "AKANE_CITY_STAGE_LALALAI_GOLD_BONUS",
+  "AKANE_CITY_STAGE_CAMPUS_DOUBLE_ADJACENCY",
+  "AKANE_CITY_STAGE_COMMERCIAL_DOUBLE_ADJACENCY",
+  "AKANE_CITY_STAGE_HARBOR_DOUBLE_ADJACENCY",
+  "AKANE_CITY_STAGE_ENTERTAINMENT_COMPLEX_DOUBLE_ADJACENCY",
+  "AKANE_CITY_STAGE_WATER_PARK_DOUBLE_ADJACENCY",
+  "AKANE_CITY_STAGE_ENCAMPMENT_DOUBLE_ADJACENCY",
+  "AKANE_CITY_STAGE_INDUSTRIAL_ZONE_DOUBLE_ADJACENCY",
+  "AKANE_CITY_STAGE_HOLY_SITE_DOUBLE_ADJACENCY",
+  "AKANE_CITY_STAGE_LALALAI_BASE_CULTURE_COMPENSATION"
+}
 local MODIFIER_CITY_STAGE_LALALAI_CULTURE_BONUS = "AKANE_CITY_STAGE_LALALAI_CULTURE_BONUS"
 local MODIFIER_CITY_STAGE_LALALAI_GOLD_BONUS = "AKANE_CITY_STAGE_LALALAI_GOLD_BONUS"
 local MODIFIER_CITY_STAGE_CAMPUS_DOUBLE_ADJACENCY = "AKANE_CITY_STAGE_CAMPUS_DOUBLE_ADJACENCY"
@@ -62,6 +75,8 @@ local ART_PROSPERITY_STANDARD_TURN_CAP = 100
 local STAGE_ACTOR_MAX_CHARGES = 3
 
 local PROPERTY_CITY_STAGE_PERFORMED = "AKANE_CITY_STAGE_PERFORMED"
+local PROPERTY_CITY_STAGE_REWARD_MODIFIERS_ATTACHED = "AKANE_CITY_STAGE_REWARD_MODIFIERS_ATTACHED"
+local PROPERTY_CITY_STAGE_ADJACENCY_MODIFIERS_ATTACHED = "AKANE_CITY_STAGE_ADJACENCY_MODIFIERS_ATTACHED"
 local PROPERTY_UNIT_STAGE_ACTOR_CHARGES = "AKANE_STAGE_ACTOR_CHARGES"
 local PROPERTY_PLAYER_ART_STACKS = "AKANE_PLAYER_ART_PROSPERITY_STACKS"
 local PROPERTY_PLAYER_ART_TURNS = "AKANE_PLAYER_ART_PROSPERITY_TURNS"
@@ -72,16 +87,6 @@ local PROPERTY_PLAYER_LAST_FAITH_BALANCE = "AKANE_PLAYER_LAST_FAITH_BALANCE"
 local PROPERTY_PLAYER_LAST_FAITH_SPEND = "AKANE_PLAYER_LAST_FAITH_SPEND"
 local PROPERTY_PLAYER_LAST_FAITH_SPEND_TURN = "AKANE_PLAYER_LAST_FAITH_SPEND_TURN"
 local PROPERTY_PLAYER_PENDING_AI_PURCHASE = "AKANE_PLAYER_PENDING_AI_PURCHASE"
-local PROPERTY_CITY_STAGE_LALALAI_CULTURE_STACKS = "AKANE_CITY_STAGE_LALALAI_CULTURE_STACKS"
-local PROPERTY_CITY_STAGE_LALALAI_GOLD_STACKS = "AKANE_CITY_STAGE_LALALAI_GOLD_STACKS"
-local PROPERTY_CITY_STAGE_CAMPUS_BONUS_APPLIED = "AKANE_CITY_STAGE_CAMPUS_BONUS_APPLIED"
-local PROPERTY_CITY_STAGE_COMMERCIAL_BONUS_APPLIED = "AKANE_CITY_STAGE_COMMERCIAL_BONUS_APPLIED"
-local PROPERTY_CITY_STAGE_HARBOR_BONUS_APPLIED = "AKANE_CITY_STAGE_HARBOR_BONUS_APPLIED"
-local PROPERTY_CITY_STAGE_ENTERTAINMENT_COMPLEX_BONUS_APPLIED = "AKANE_CITY_STAGE_ENTERTAINMENT_COMPLEX_BONUS_APPLIED"
-local PROPERTY_CITY_STAGE_WATER_PARK_BONUS_APPLIED = "AKANE_CITY_STAGE_WATER_PARK_BONUS_APPLIED"
-local PROPERTY_CITY_STAGE_ENCAMPMENT_BONUS_APPLIED = "AKANE_CITY_STAGE_ENCAMPMENT_BONUS_APPLIED"
-local PROPERTY_CITY_STAGE_INDUSTRIAL_ZONE_BONUS_APPLIED = "AKANE_CITY_STAGE_INDUSTRIAL_ZONE_BONUS_APPLIED"
-local PROPERTY_CITY_STAGE_HOLY_SITE_BONUS_APPLIED = "AKANE_CITY_STAGE_HOLY_SITE_BONUS_APPLIED"
 local g_unitCostCache = {}
 local g_lastWarriorFaithRewardKey = nil
 
@@ -441,166 +446,6 @@ local function IsActorOnOwnedLalalaiDistrict(pUnit)
   return true, pCity, pDistrict, pPlot
 end
 
-local function AttachCityModifierStack(pCity, modifierID, count)
-  if pCity == nil or pCity.AttachModifierByID == nil or count <= 0 then
-    return 0
-  end
-
-  for _ = 1, count do
-    pCity:AttachModifierByID(modifierID)
-  end
-
-  return count
-end
-
-local function GetCityDistrictByType(pCity, districtTypeIndex)
-  if pCity == nil or districtTypeIndex == nil or districtTypeIndex < 0 then
-    return nil
-  end
-
-  local pDistricts = pCity:GetDistricts()
-  if pDistricts == nil or not pDistricts:HasDistrict(districtTypeIndex) then
-    return nil
-  end
-
-  local districtX, districtY = pDistricts:GetDistrictLocation(districtTypeIndex)
-  if districtX == nil or districtY == nil then
-    return nil
-  end
-
-  return CityManager.GetDistrictAt(districtX, districtY)
-end
-
-local function GetDistrictAdjacencyHalfSteps(pDistrict, yieldIndex)
-  if pDistrict == nil or yieldIndex == nil or yieldIndex < 0 or pDistrict.GetAdjacencyYield == nil then
-    return 0
-  end
-
-  local adjacencyYield = tonumber(pDistrict:GetAdjacencyYield(yieldIndex)) or 0
-  return math.max(0, math.floor((adjacencyYield * 2) + 0.001))
-end
-
-local function AreDistrictsAdjacent(pDistrictA, pDistrictB)
-  if pDistrictA == nil or pDistrictB == nil then
-    return false
-  end
-
-  local ax, ay = pDistrictA:GetX(), pDistrictA:GetY()
-  local bx, by = pDistrictB:GetX(), pDistrictB:GetY()
-  if ax == nil or ay == nil or bx == nil or by == nil then
-    return false
-  end
-
-  for direction = 0, DirectionTypes.NUM_DIRECTION_TYPES - 1, 1 do
-    local adjacentPlot = Map.GetAdjacentPlot(ax, ay, direction)
-    if adjacentPlot ~= nil and adjacentPlot:GetX() == bx and adjacentPlot:GetY() == by then
-      return true
-    end
-  end
-
-  return false
-end
-
-local function ReconcileCityModifierHalfSteps(pCity, propertyKey, desiredHalfSteps, positiveModifierID, negativeModifierID)
-  if pCity == nil then
-    return
-  end
-
-  local currentHalfSteps = ToInt(pCity:GetProperty(propertyKey))
-  if currentHalfSteps < desiredHalfSteps then
-    AttachCityModifierStack(pCity, positiveModifierID, desiredHalfSteps - currentHalfSteps)
-  elseif currentHalfSteps > desiredHalfSteps then
-    AttachCityModifierStack(pCity, negativeModifierID, currentHalfSteps - desiredHalfSteps)
-  end
-
-  if currentHalfSteps ~= desiredHalfSteps then
-    pCity:SetProperty(propertyKey, desiredHalfSteps)
-  end
-end
-
-local function ApplyStageAdjacencyDoublingForCity(pCity)
-  if pCity == nil or ToInt(pCity:GetProperty(PROPERTY_CITY_STAGE_PERFORMED)) < 1 then
-    return
-  end
-
-  local pLalalaiDistrict = GetCityDistrictByType(pCity, DISTRICT_LALALAI_INDEX)
-  if pLalalaiDistrict == nil then
-    return
-  end
-
-  ReconcileCityModifierHalfSteps(
-    pCity,
-    PROPERTY_CITY_STAGE_LALALAI_CULTURE_STACKS,
-    GetDistrictAdjacencyHalfSteps(pLalalaiDistrict, YIELD_CULTURE_INDEX),
-    MODIFIER_CITY_STAGE_LALALAI_CULTURE_BONUS,
-    MODIFIER_CITY_STAGE_LALALAI_CULTURE_BONUS_NEGATIVE
-  )
-
-  ReconcileCityModifierHalfSteps(
-    pCity,
-    PROPERTY_CITY_STAGE_LALALAI_GOLD_STACKS,
-    GetDistrictAdjacencyHalfSteps(pLalalaiDistrict, YIELD_GOLD_INDEX),
-    MODIFIER_CITY_STAGE_LALALAI_GOLD_BONUS,
-    MODIFIER_CITY_STAGE_LALALAI_GOLD_BONUS_NEGATIVE
-  )
-
-  local pCampusDistrict = GetCityDistrictByType(pCity, DISTRICT_CAMPUS_INDEX)
-  local campusHalfSteps = 0
-  if AreDistrictsAdjacent(pLalalaiDistrict, pCampusDistrict) then
-    campusHalfSteps = GetDistrictAdjacencyHalfSteps(pCampusDistrict, YIELD_SCIENCE_INDEX)
-  end
-  ReconcileCityModifierHalfSteps(pCity, PROPERTY_CITY_STAGE_CAMPUS_BONUS_APPLIED, campusHalfSteps, MODIFIER_CITY_STAGE_CAMPUS_DOUBLE_ADJACENCY, MODIFIER_CITY_STAGE_CAMPUS_DOUBLE_ADJACENCY_NEGATIVE)
-
-  local pCommercialDistrict = GetCityDistrictByType(pCity, DISTRICT_COMMERCIAL_HUB_INDEX)
-  local commercialHalfSteps = 0
-  if AreDistrictsAdjacent(pLalalaiDistrict, pCommercialDistrict) then
-    commercialHalfSteps = GetDistrictAdjacencyHalfSteps(pCommercialDistrict, YIELD_GOLD_INDEX)
-  end
-  ReconcileCityModifierHalfSteps(pCity, PROPERTY_CITY_STAGE_COMMERCIAL_BONUS_APPLIED, commercialHalfSteps, MODIFIER_CITY_STAGE_COMMERCIAL_DOUBLE_ADJACENCY, MODIFIER_CITY_STAGE_COMMERCIAL_DOUBLE_ADJACENCY_NEGATIVE)
-
-  local pHarborDistrict = GetCityDistrictByType(pCity, DISTRICT_HARBOR_INDEX)
-  local harborHalfSteps = 0
-  if AreDistrictsAdjacent(pLalalaiDistrict, pHarborDistrict) then
-    harborHalfSteps = GetDistrictAdjacencyHalfSteps(pHarborDistrict, YIELD_GOLD_INDEX)
-  end
-  ReconcileCityModifierHalfSteps(pCity, PROPERTY_CITY_STAGE_HARBOR_BONUS_APPLIED, harborHalfSteps, MODIFIER_CITY_STAGE_HARBOR_DOUBLE_ADJACENCY, MODIFIER_CITY_STAGE_HARBOR_DOUBLE_ADJACENCY_NEGATIVE)
-
-  local pEntertainmentComplexDistrict = GetCityDistrictByType(pCity, DISTRICT_ENTERTAINMENT_COMPLEX_INDEX)
-  local entertainmentComplexHalfSteps = 0
-  if AreDistrictsAdjacent(pLalalaiDistrict, pEntertainmentComplexDistrict) then
-    entertainmentComplexHalfSteps = GetDistrictAdjacencyHalfSteps(pEntertainmentComplexDistrict, YIELD_PRODUCTION_INDEX)
-  end
-  ReconcileCityModifierHalfSteps(pCity, PROPERTY_CITY_STAGE_ENTERTAINMENT_COMPLEX_BONUS_APPLIED, entertainmentComplexHalfSteps, MODIFIER_CITY_STAGE_ENTERTAINMENT_COMPLEX_DOUBLE_ADJACENCY, MODIFIER_CITY_STAGE_ENTERTAINMENT_COMPLEX_DOUBLE_ADJACENCY_NEGATIVE)
-
-  local pWaterParkDistrict = GetCityDistrictByType(pCity, DISTRICT_WATER_PARK_INDEX)
-  local waterParkHalfSteps = 0
-  if AreDistrictsAdjacent(pLalalaiDistrict, pWaterParkDistrict) then
-    waterParkHalfSteps = GetDistrictAdjacencyHalfSteps(pWaterParkDistrict, YIELD_PRODUCTION_INDEX)
-  end
-  ReconcileCityModifierHalfSteps(pCity, PROPERTY_CITY_STAGE_WATER_PARK_BONUS_APPLIED, waterParkHalfSteps, MODIFIER_CITY_STAGE_WATER_PARK_DOUBLE_ADJACENCY, MODIFIER_CITY_STAGE_WATER_PARK_DOUBLE_ADJACENCY_NEGATIVE)
-
-  local pEncampmentDistrict = GetCityDistrictByType(pCity, DISTRICT_ENCAMPMENT_INDEX)
-  local encampmentHalfSteps = 0
-  if AreDistrictsAdjacent(pLalalaiDistrict, pEncampmentDistrict) then
-    encampmentHalfSteps = GetDistrictAdjacencyHalfSteps(pEncampmentDistrict, YIELD_PRODUCTION_INDEX)
-  end
-  ReconcileCityModifierHalfSteps(pCity, PROPERTY_CITY_STAGE_ENCAMPMENT_BONUS_APPLIED, encampmentHalfSteps, MODIFIER_CITY_STAGE_ENCAMPMENT_DOUBLE_ADJACENCY, MODIFIER_CITY_STAGE_ENCAMPMENT_DOUBLE_ADJACENCY_NEGATIVE)
-
-  local pIndustrialZoneDistrict = GetCityDistrictByType(pCity, DISTRICT_INDUSTRIAL_ZONE_INDEX)
-  local industrialZoneHalfSteps = 0
-  if AreDistrictsAdjacent(pLalalaiDistrict, pIndustrialZoneDistrict) then
-    industrialZoneHalfSteps = GetDistrictAdjacencyHalfSteps(pIndustrialZoneDistrict, YIELD_PRODUCTION_INDEX)
-  end
-  ReconcileCityModifierHalfSteps(pCity, PROPERTY_CITY_STAGE_INDUSTRIAL_ZONE_BONUS_APPLIED, industrialZoneHalfSteps, MODIFIER_CITY_STAGE_INDUSTRIAL_ZONE_DOUBLE_ADJACENCY, MODIFIER_CITY_STAGE_INDUSTRIAL_ZONE_DOUBLE_ADJACENCY_NEGATIVE)
-
-  local pHolySiteDistrict = GetCityDistrictByType(pCity, DISTRICT_HOLY_SITE_INDEX)
-  local holySiteHalfSteps = 0
-  if AreDistrictsAdjacent(pLalalaiDistrict, pHolySiteDistrict) then
-    holySiteHalfSteps = GetDistrictAdjacencyHalfSteps(pHolySiteDistrict, YIELD_FAITH_INDEX)
-  end
-  ReconcileCityModifierHalfSteps(pCity, PROPERTY_CITY_STAGE_HOLY_SITE_BONUS_APPLIED, holySiteHalfSteps, MODIFIER_CITY_STAGE_HOLY_SITE_DOUBLE_ADJACENCY, MODIFIER_CITY_STAGE_HOLY_SITE_DOUBLE_ADJACENCY_NEGATIVE)
-end
-
 local function AttachStageRewardModifiers(pCity)
   if pCity == nil then
     return false
@@ -611,13 +456,40 @@ local function AttachStageRewardModifiers(pCity)
     return false
   end
 
+  if ToInt(pCity:GetProperty(PROPERTY_CITY_STAGE_REWARD_MODIFIERS_ATTACHED)) >= 1 then
+    return false
+  end
+
   for _, modifierID in ipairs(STAGE_REWARD_MODIFIERS) do
     pCity:AttachModifierByID(modifierID)
   end
 
-  ApplyStageAdjacencyDoublingForCity(pCity)
+  pCity:SetProperty(PROPERTY_CITY_STAGE_REWARD_MODIFIERS_ATTACHED, 1)
 
   Log("attached stage reward modifiers cityID=" .. tostring(pCity:GetID()) .. ", modifierCount=" .. tostring(#STAGE_REWARD_MODIFIERS))
+  return true
+end
+
+local function AttachStageAdjacencyModifiers(pCity)
+  if pCity == nil then
+    return false
+  end
+
+  if pCity.AttachModifierByID == nil then
+    Log("abort: city adjacency modifier attach API unavailable cityID=" .. tostring(pCity:GetID()))
+    return false
+  end
+
+  if ToInt(pCity:GetProperty(PROPERTY_CITY_STAGE_ADJACENCY_MODIFIERS_ATTACHED)) >= 1 then
+    return false
+  end
+
+  for _, modifierID in ipairs(STAGE_ADJACENCY_MODIFIERS) do
+    pCity:AttachModifierByID(modifierID)
+  end
+
+  pCity:SetProperty(PROPERTY_CITY_STAGE_ADJACENCY_MODIFIERS_ATTACHED, 1)
+  Log("attached stage adjacency modifiers cityID=" .. tostring(pCity:GetID()) .. ", modifierCount=" .. tostring(#STAGE_ADJACENCY_MODIFIERS))
   return true
 end
 
@@ -1006,9 +878,10 @@ local function GetArtProsperityState(pPlayer)
   return ToInt(pPlayer:GetProperty(PROPERTY_PLAYER_ART_STACKS)), ToInt(pPlayer:GetProperty(PROPERTY_PLAYER_ART_TURNS))
 end
 
-local function RestoreStageLegacyCultureModifiers()
+local function RestoreStagePerformanceModifiers()
   local aliveMajors = PlayerManager.GetAliveMajors()
-  local restoredCount = 0
+  local restoredRewardCount = 0
+  local restoredAdjacencyCount = 0
   if aliveMajors == nil then
     Log("restore skipped: no alive majors available")
     return
@@ -1020,14 +893,17 @@ local function RestoreStageLegacyCultureModifiers()
       for _, pCity in pCities:Members() do
         if ToInt(pCity:GetProperty(PROPERTY_CITY_STAGE_PERFORMED)) >= 1 then
           if AttachStageRewardModifiers(pCity) then
-            restoredCount = restoredCount + 1
+            restoredRewardCount = restoredRewardCount + 1
+          end
+          if AttachStageAdjacencyModifiers(pCity) then
+            restoredAdjacencyCount = restoredAdjacencyCount + 1
           end
         end
       end
     end
   end
 
-  Log("restore complete: cityCount=" .. tostring(restoredCount))
+  Log("restore complete: rewardCityCount=" .. tostring(restoredRewardCount) .. ", adjacencyCityCount=" .. tostring(restoredAdjacencyCount))
 end
 
 local function RestoreArtProsperityModifiers()
@@ -1059,13 +935,6 @@ function OnPlayerTurnStarted(playerID, _turnNumber)
 
   SyncFaithBalanceSnapshot(pPlayer)
   RefreshPlayerUnitCostCache(playerID)
-
-  local pCities = pPlayer:GetCities()
-  if pCities ~= nil then
-    for _, pCity in pCities:Members() do
-      ApplyStageAdjacencyDoublingForCity(pCity)
-    end
-  end
 
   local stacks = ToInt(pPlayer:GetProperty(PROPERTY_PLAYER_ART_STACKS))
   local turns = ToInt(pPlayer:GetProperty(PROPERTY_PLAYER_ART_TURNS))
@@ -1143,43 +1012,6 @@ function OnCityMadePurchase(playerID, cityID, iX, iY, purchaseType, objectType)
   TryResolveAiModeFaithPurchaseRefund(playerID)
 end
 
-function OnDistrictAddedToMap(playerID, _districtID, cityID, _iX, _iY, _districtType, _percentComplete)
-  local pPlayer = Players[playerID]
-  if pPlayer == nil or not pPlayer:IsAlive() then
-    return
-  end
-
-  local pCity = pPlayer:GetCities():FindID(cityID)
-  if pCity == nil then
-    return
-  end
-
-  ApplyStageAdjacencyDoublingForCity(pCity)
-end
-
-function OnWonderCompleted(iX, iY, _buildingIndex, playerIndex, cityID, _iPercentComplete, _iUnknown)
-  local pPlayer = Players[playerIndex]
-  if pPlayer == nil or not pPlayer:IsAlive() then
-    return
-  end
-
-  local pCity = pPlayer:GetCities():FindID(cityID)
-  if pCity ~= nil then
-    ApplyStageAdjacencyDoublingForCity(pCity)
-    return
-  end
-
-  local pPlot = Map.GetPlot(iX, iY)
-  if pPlot == nil then
-    return
-  end
-
-  local fallbackCity = Cities.GetPlotWorkingCity(pPlot:GetIndex())
-  if fallbackCity ~= nil then
-    ApplyStageAdjacencyDoublingForCity(fallbackCity)
-  end
-end
-
 function AKANE_STAGE_ACTOR_PERFORM(playerID, unitIDOrParams)
   local unitID, requestSource = ResolveStagePerformUnitID(playerID, unitIDOrParams)
   Log("event received: source=" .. tostring(requestSource) .. ", playerID=" .. tostring(playerID) .. ", unitID=" .. tostring(unitID))
@@ -1223,6 +1055,7 @@ function AKANE_STAGE_ACTOR_PERFORM(playerID, unitIDOrParams)
   pCity:SetProperty(PROPERTY_CITY_STAGE_PERFORMED, 1)
   local artStacks, artTurns = GrantArtProsperityFromPerformance(pPlayer, pCity)
   AttachStageRewardModifiers(pCity)
+  AttachStageAdjacencyModifiers(pCity)
 
   Game.AddWorldViewText(
     0,
@@ -1238,7 +1071,7 @@ function AKANE_STAGE_ACTOR_PERFORM(playerID, unitIDOrParams)
   end
 end
 
-RestoreStageLegacyCultureModifiers()
+RestoreStagePerformanceModifiers()
 RestoreArtProsperityModifiers()
 RefreshAllUnitCostCaches()
 for _, pPlayer in ipairs(PlayerManager.GetAliveMajors() or {}) do
@@ -1246,12 +1079,6 @@ for _, pPlayer in ipairs(PlayerManager.GetAliveMajors() or {}) do
 end
 GameEvents[AKANE_EVENT_STAGE_PERFORM].Add(AKANE_STAGE_ACTOR_PERFORM)
 GameEvents.PlayerTurnStarted.Add(OnPlayerTurnStarted)
-if Events ~= nil and Events.DistrictAddedToMap ~= nil then
-  Events.DistrictAddedToMap.Add(OnDistrictAddedToMap)
-end
-if Events ~= nil and Events.WonderCompleted ~= nil then
-  Events.WonderCompleted.Add(OnWonderCompleted)
-end
 if Events ~= nil and Events.FaithChanged ~= nil then
   Events.FaithChanged.Add(OnFaithChanged)
 end
