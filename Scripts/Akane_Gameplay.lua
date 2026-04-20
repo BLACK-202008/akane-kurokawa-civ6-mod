@@ -640,18 +640,15 @@ local function AttachModifierStacksToPlayer(pPlayer, modifierIDs, stackCount)
   return attachCount
 end
 
-local function GrantRandomActorModeEureka(playerID, unitID)
+local function GrantRandomReasoningMasterEureka(playerID, unitID)
   local pPlayer = Players[playerID]
   if pPlayer == nil or not pPlayer:IsAlive() or not IsAkanePlayer(playerID) then
-    return
-  end
-  if GetCurrentMode(pPlayer) ~= MODE_ACTOR then
     return
   end
 
   local pTechs = pPlayer:GetTechs()
   if pTechs == nil or pTechs.TriggerBoost == nil or pTechs.HasTech == nil or pTechs.HasBoostBeenTriggered == nil or pTechs.CanResearch == nil then
-    Log("actor eureka skipped: player tech API unavailable playerID=" .. tostring(playerID))
+    Log("reasoning master eureka skipped: player tech API unavailable playerID=" .. tostring(playerID))
     return
   end
 
@@ -669,11 +666,11 @@ local function GrantRandomActorModeEureka(playerID, unitID)
   end
 
   if #eligibleTechs == 0 then
-    Log("actor eureka skipped: no currently researchable techs playerID=" .. tostring(playerID))
+    Log("reasoning master eureka skipped: no currently researchable techs playerID=" .. tostring(playerID))
     return
   end
 
-  local randomIndex = Game.GetRandNum(#eligibleTechs, "Akane Actor Mode Random Eureka") + 1
+  local randomIndex = Game.GetRandNum(#eligibleTechs, "Akane Reasoning Master Random Eureka") + 1
   local tech = eligibleTechs[randomIndex]
   pTechs:TriggerBoost(tech.Index)
 
@@ -681,14 +678,14 @@ local function GrantRandomActorModeEureka(playerID, unitID)
   if x ~= nil and y ~= nil then
     Game.AddWorldViewText(
       playerID,
-      Localize("LOC_AKANE_MODE_ACTOR_EUREKA_WORLD_TEXT", Locale.Lookup(tech.Name)),
+      Localize("LOC_AKANE_REASONING_EUREKA_WORLD_TEXT", Locale.Lookup(tech.Name)),
       x,
       y,
       0
     )
   end
 
-  Log("actor eureka granted playerID=" .. tostring(playerID) .. ", tech=" .. tostring(tech.TechnologyType))
+  Log("reasoning master eureka granted playerID=" .. tostring(playerID) .. ", tech=" .. tostring(tech.TechnologyType))
 end
 
 local function AreCivicPrereqsSatisfied(pCulture, civicType)
@@ -710,18 +707,18 @@ local function AreCivicPrereqsSatisfied(pCulture, civicType)
   return hasAnyPrereq or civicType == "CIVIC_CODE_OF_LAWS"
 end
 
-local function GrantRandomAiModeInspiration(playerID, unitID)
+local function GrantRandomActorModeInspiration(playerID, unitID)
   local pPlayer = Players[playerID]
   if pPlayer == nil or not pPlayer:IsAlive() or not IsAkanePlayer(playerID) then
     return
   end
-  if GetCurrentMode(pPlayer) ~= MODE_AI then
+  if GetCurrentMode(pPlayer) ~= MODE_ACTOR then
     return
   end
 
   local pCulture = pPlayer:GetCulture()
   if pCulture == nil or pCulture.TriggerBoost == nil or pCulture.HasCivic == nil or pCulture.HasBoostBeenTriggered == nil then
-    Log("ai inspiration skipped: player culture API unavailable playerID=" .. tostring(playerID))
+    Log("actor inspiration skipped: player culture API unavailable playerID=" .. tostring(playerID))
     return
   end
 
@@ -742,11 +739,11 @@ local function GrantRandomAiModeInspiration(playerID, unitID)
   end
 
   if #eligibleCivics == 0 then
-    Log("ai inspiration skipped: no currently progressable civics playerID=" .. tostring(playerID))
+    Log("actor inspiration skipped: no currently progressable civics playerID=" .. tostring(playerID))
     return
   end
 
-  local randomIndex = Game.GetRandNum(#eligibleCivics, "Akane Ai Mode Random Inspiration") + 1
+  local randomIndex = Game.GetRandNum(#eligibleCivics, "Akane Actor Mode Random Inspiration") + 1
   local civic = eligibleCivics[randomIndex]
   pCulture:TriggerBoost(civic.Index)
 
@@ -754,14 +751,14 @@ local function GrantRandomAiModeInspiration(playerID, unitID)
   if x ~= nil and y ~= nil then
     Game.AddWorldViewText(
       playerID,
-      Localize("LOC_AKANE_MODE_AI_INSPIRATION_WORLD_TEXT", Locale.Lookup(civic.Name)),
+      Localize("LOC_AKANE_MODE_ACTOR_INSPIRATION_WORLD_TEXT", Locale.Lookup(civic.Name)),
       x,
       y,
       0
     )
   end
 
-  Log("ai inspiration granted playerID=" .. tostring(playerID) .. ", civic=" .. tostring(civic.CivicType))
+  Log("actor inspiration granted playerID=" .. tostring(playerID) .. ", civic=" .. tostring(civic.CivicType))
 end
 
 local function GetFaithBalance(pPlayer)
@@ -1096,11 +1093,11 @@ function OnUnitKilledInCombat(defeatedPlayerID, defeatedUnitID, attackerPlayerID
 end
 
 function OnUnitGreatPersonActivated(playerID, unitID, _greatPersonClass, _greatPersonType)
-  GrantRandomActorModeEureka(playerID, unitID)
+  GrantRandomReasoningMasterEureka(playerID, unitID)
 end
 
 function OnUnitGreatPersonCreated(playerID, unitID, _greatPersonClass, _greatPersonType)
-  GrantRandomAiModeInspiration(playerID, unitID)
+  GrantRandomActorModeInspiration(playerID, unitID)
 end
 
 function OnFaithChanged(playerID, _yield, balance)
