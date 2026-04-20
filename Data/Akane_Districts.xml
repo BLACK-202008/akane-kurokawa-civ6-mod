@@ -52,6 +52,11 @@
   <District_Adjacencies>
     <Row DistrictType="DISTRICT_LALALAI_TROUPE" YieldChangeId="Wonder_Culture"/>
     <Row DistrictType="DISTRICT_LALALAI_TROUPE" YieldChangeId="District_Culture"/>
+    <Row DistrictType="DISTRICT_LALALAI_TROUPE" YieldChangeId="Government_Culture"/>
+    <Row DistrictType="DISTRICT_LALALAI_TROUPE" YieldChangeId="EntertainmentComplex_Culture"/>
+    <Row DistrictType="DISTRICT_LALALAI_TROUPE" YieldChangeId="WaterPark_Culture"/>
+    <Row DistrictType="DISTRICT_LALALAI_TROUPE" YieldChangeId="StreetCarnival_Culture"/>
+    <Row DistrictType="DISTRICT_LALALAI_TROUPE" YieldChangeId="Copacabana_Culture"/>
     <Row DistrictType="DISTRICT_LALALAI_TROUPE" YieldChangeId="Lalalai_CityCenter_Culture"/>
     <Row DistrictType="DISTRICT_LALALAI_TROUPE" YieldChangeId="Lalalai_CityCenter_Gold"/>
     <Row DistrictType="DISTRICT_LALALAI_TROUPE" YieldChangeId="Lalalai_Wonder_Gold"/>
@@ -69,7 +74,7 @@
     <Row ID="Lalalai_CityCenter_Culture" Description="LOC_DISTRICT_CULTURE_CITY_CENTER" YieldType="YIELD_CULTURE" YieldChange="1" TilesRequired="1" AdjacentDistrict="DISTRICT_CITY_CENTER"/>
     <Row ID="Lalalai_CityCenter_Gold" Description="LOC_AKANE_ADJ_CITY_CENTER_GOLD" YieldType="YIELD_GOLD" YieldChange="2" TilesRequired="1" AdjacentDistrict="DISTRICT_CITY_CENTER"/>
     <Row ID="Lalalai_Wonder_Gold" Description="LOC_AKANE_ADJ_WONDER_GOLD" YieldType="YIELD_GOLD" YieldChange="2" TilesRequired="1" AdjacentWonder="true"/>
-    <Row ID="Lalalai_Entertainment_Culture" Description="LOC_AKANE_ADJ_ENTERTAINMENT_CULTURE" YieldType="YIELD_CULTURE" YieldChange="1" TilesRequired="1" AdjacentDistrict="DISTRICT_ENTERTAINMENT_COMPLEX"/>
+    <Row ID="Lalalai_Entertainment_Culture" Description="LOC_AKANE_ADJ_ENTERTAINMENT_CULTURE" YieldType="YIELD_CULTURE" YieldChange="2" TilesRequired="1" AdjacentDistrict="DISTRICT_ENTERTAINMENT_COMPLEX"/>
 
     <Row ID="Lalalai_To_Campus_Science" Description="LOC_AKANE_ADJ_LALALAI_TO_CAMPUS_SCIENCE" YieldType="YIELD_SCIENCE" YieldChange="1" TilesRequired="1" AdjacentDistrict="DISTRICT_LALALAI_TROUPE"/>
     <Row ID="Lalalai_To_CommercialHub_Gold" Description="LOC_AKANE_ADJ_LALALAI_TO_COMMERCIAL_GOLD" YieldType="YIELD_GOLD" YieldChange="1" TilesRequired="1" AdjacentDistrict="DISTRICT_LALALAI_TROUPE"/>
