@@ -11,11 +11,11 @@
     <Row Tag="LOC_TRAIT_LEADER_KUROKAWA_AKANE_NAME" Language="zh_Hans_CN"><Text>角色掌控者</Text></Row>
     <Row Tag="LOC_TRAIT_LEADER_KUROKAWA_AKANE_DESCRIPTION" Language="zh_Hans_CN"><Text>黑川茜拥有“推理大师”特质：与 LALALAI 剧团相邻的学院额外获得 +1 [ICON_Science] 科技值，且图书馆、大学、研究实验室各额外再提供 +1 [ICON_Science] 科技值；在解锁“数学”后额外获得 +10% [ICON_Science] 科技值，在解锁“科学理论”后额外再获得 +10% [ICON_Science] 科技值。此外，黑川茜可随时选择扮演星野爱、鞘姬、星野露比三个角色其中之一。每次切换会立刻改变加成方向（标准速度冷却为10回合），并在当前游戏速度冷却时长的一半期间提供全产出 +16%。整体更偏向作战与生产爆发。</Text></Row>
     <Row Tag="LOC_DISTRICT_LALALAI_TROUPE_NAME" Language="zh_Hans_CN"><Text>LALALAI 剧团</Text></Row>
-    <Row Tag="LOC_DISTRICT_LALALAI_TROUPE_DESCRIPTION" Language="zh_Hans_CN"><Text>替代剧院广场的特色区域。基础提供 +1 [ICON_Culture] 文化值与 +2 宜居度。每相邻 1 个市中心，获得 +1 [ICON_Culture] 文化值，并额外获得 +2 [ICON_Gold] 金币；每相邻 1 个奇观，获得 +2 [ICON_Culture] 文化值，并额外获得 +2 [ICON_Gold] 金币。相邻的商业中心与港口获得 +1 [ICON_Gold] 金币，学院获得 +1 [ICON_Science] 科技值，军营与工业区获得 +1 [ICON_Production] 生产力，圣地获得 +1 [ICON_Faith] 信仰值。该区域专家额外提供 +2 [ICON_Food] 食物与 +1 [ICON_Production] 生产力。</Text></Row>
+    <Row Tag="LOC_DISTRICT_LALALAI_TROUPE_DESCRIPTION" Language="zh_Hans_CN"><Text>替代剧院广场的特色区域。基础提供 +1 [ICON_Culture] 文化值与 +2 宜居度。每相邻 1 个市中心，获得 +1 [ICON_Culture] 文化值，并额外获得 +2 [ICON_Gold] 金币；每相邻 1 个奇观，获得 +2 [ICON_Culture] 文化值，并额外获得 +2 [ICON_Gold] 金币。相邻的商业中心与港口获得 +2 [ICON_Gold] 金币，学院获得 +1 [ICON_Science] 科技值，娱乐中心与水上乐园获得 +2 [ICON_Production] 生产力，军营与工业区获得 +1 [ICON_Production] 生产力，圣地获得 +1 [ICON_Faith] 信仰值。该区域专家额外提供 +2 [ICON_Food] 食物与 +1 [ICON_Production] 生产力。</Text></Row>
     <Row Tag="LOC_UNIT_STAGE_ACTOR_NAME" Language="zh_Hans_CN"><Text>话剧演员</Text></Row>
     <Row Tag="LOC_UNIT_STAGE_ACTOR_DESCRIPTION" Language="zh_Hans_CN"><Text>黑川茜专属的特色平民单位，拥有 3 次演出机会。每次可在一座己方城市的 LALALAI 剧团进行演出，同一城市限一次；演出后，该城的 LALALAI 剧团及与其相邻的专业区域，相邻加成都会翻倍；若该城拥有古罗马剧场、美术馆、考古博物馆、广播中心，则每座已建成建筑额外提供 +1 [ICON_Culture] 文化值，且该城每拥有 1 座上述建筑，旅游业绩额外提高 +20%。在最后一次演出后退场。</Text></Row>
     <Row Tag="LOC_AKANE_STAGE_ACTOR_PERFORM_NAME" Language="zh_Hans_CN"><Text>舞台演出</Text></Row>
-    <Row Tag="LOC_AKANE_STAGE_ACTOR_PERFORM_TOOLTIP" Language="zh_Hans_CN"><Text>在己方 LALALAI 剧团进行演出。消耗 1 次演出机会（当前剩余 {1_num} 次）。每座城市仅可演出一次。该城市的 LALALAI 剧团及与其相邻的学院、商业中心、港口、军营、工业区、圣地，相邻加成都会翻倍。若该城拥有古罗马剧场、美术馆、考古博物馆、广播中心，则每座已建成建筑额外提供 +1 [ICON_Culture] 文化值，且该城每拥有 1 座上述建筑，旅游业绩额外提高 +20%。同时触发可叠加的全国艺术繁荣。该单位仅在最后一次演出后移除。</Text></Row>
+    <Row Tag="LOC_AKANE_STAGE_ACTOR_PERFORM_TOOLTIP" Language="zh_Hans_CN"><Text>在己方 LALALAI 剧团进行演出。消耗 1 次演出机会（当前剩余 {1_num} 次）。每座城市仅可演出一次。该城市的 LALALAI 剧团及与其相邻的学院、商业中心、港口、娱乐中心、水上乐园、军营、工业区、圣地，相邻加成都会翻倍。若该城拥有古罗马剧场、美术馆、考古博物馆、广播中心，则每座已建成建筑额外提供 +1 [ICON_Culture] 文化值，且该城每拥有 1 座上述建筑，旅游业绩额外提高 +20%。同时触发可叠加的全国艺术繁荣。该单位仅在最后一次演出后移除。</Text></Row>
     <Row Tag="LOC_AKANE_STAGE_ACTOR_PERFORM_WORLD_TEXT" Language="zh_Hans_CN"><Text>[ICON_Culture] 舞台演出奖励已生效。该单位还剩 {1_num} 次演出机会。全国艺术繁荣已生效：当前 {2_num} 层，剩余 {3_num} 回合。</Text></Row>
     <Row Tag="LOC_AKANE_ART_PROSPERITY_APPLIED" Language="zh_Hans_CN"><Text> </Text></Row>
     <Row Tag="LOC_AKANE_ART_PROSPERITY_EXPIRED" Language="zh_Hans_CN"><Text>全国艺术繁荣已结束。</Text></Row>
@@ -64,8 +64,10 @@
     <Row Tag="LOC_AKANE_ADJ_CITY_CENTER_GOLD" Language="zh_Hans_CN"><Text>每个相邻市中心提供 +2 [ICON_Gold] 金币。</Text></Row>
     <Row Tag="LOC_AKANE_ADJ_WONDER_GOLD" Language="zh_Hans_CN"><Text>每个相邻奇观提供 +2 [ICON_Gold] 金币。</Text></Row>
     <Row Tag="LOC_AKANE_ADJ_LALALAI_TO_CAMPUS_SCIENCE" Language="zh_Hans_CN"><Text>每个相邻 LALALAI 剧团提供 +1 [ICON_Science] 科技值。</Text></Row>
-    <Row Tag="LOC_AKANE_ADJ_LALALAI_TO_COMMERCIAL_GOLD" Language="zh_Hans_CN"><Text>每个相邻 LALALAI 剧团提供 +1 [ICON_Gold] 金币。</Text></Row>
-    <Row Tag="LOC_AKANE_ADJ_LALALAI_TO_HARBOR_GOLD" Language="zh_Hans_CN"><Text>每个相邻 LALALAI 剧团提供 +1 [ICON_Gold] 金币。</Text></Row>
+    <Row Tag="LOC_AKANE_ADJ_LALALAI_TO_COMMERCIAL_GOLD" Language="zh_Hans_CN"><Text>每个相邻 LALALAI 剧团提供 +2 [ICON_Gold] 金币。</Text></Row>
+    <Row Tag="LOC_AKANE_ADJ_LALALAI_TO_HARBOR_GOLD" Language="zh_Hans_CN"><Text>每个相邻 LALALAI 剧团提供 +2 [ICON_Gold] 金币。</Text></Row>
+    <Row Tag="LOC_AKANE_ADJ_LALALAI_TO_ENTERTAINMENT_PRODUCTION" Language="zh_Hans_CN"><Text>每个相邻 LALALAI 剧团提供 +2 [ICON_Production] 生产力。</Text></Row>
+    <Row Tag="LOC_AKANE_ADJ_LALALAI_TO_WATER_PARK_PRODUCTION" Language="zh_Hans_CN"><Text>每个相邻 LALALAI 剧团提供 +2 [ICON_Production] 生产力。</Text></Row>
     <Row Tag="LOC_AKANE_ADJ_LALALAI_TO_ENCAMPMENT_PRODUCTION" Language="zh_Hans_CN"><Text>每个相邻 LALALAI 剧团提供 +1 [ICON_Production] 生产力。</Text></Row>
     <Row Tag="LOC_AKANE_ADJ_LALALAI_TO_IZ_PRODUCTION" Language="zh_Hans_CN"><Text>每个相邻 LALALAI 剧团提供 +1 [ICON_Production] 生产力。</Text></Row>
     <Row Tag="LOC_AKANE_ADJ_LALALAI_TO_HOLYSITE_FAITH" Language="zh_Hans_CN"><Text>每个相邻 LALALAI 剧团提供 +1 [ICON_Faith] 信仰值。</Text></Row>
