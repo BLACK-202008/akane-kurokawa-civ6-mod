@@ -24,21 +24,27 @@ local MODE_POSITIVE_MODIFIERS = {
     "AKANE_MODE_AI_FAITH_FLAT",
     "AKANE_MODE_AI_PROPHET_POINTS",
     "AKANE_MODE_AI_PROPHET_POINTS_PER_HOLY_SITE",
-    "AKANE_MODE_AI_FAITH_PERCENT"
+    "AKANE_MODE_AI_FAITH_PERCENT",
+    "AKANE_MODE_AI_RELIGIOUS_STRENGTH"
   },
   [MODE_ACTOR] = {
     "AKANE_MODE_ACTOR_CULTURE_FLAT",
     "AKANE_MODE_ACTOR_ARTIST_POINTS",
     "AKANE_MODE_ACTOR_ARTIST_POINTS_FLAT",
+    "AKANE_MODE_ACTOR_WRITER_POINTS",
+    "AKANE_MODE_ACTOR_WRITER_POINTS_FLAT",
+    "AKANE_MODE_ACTOR_MUSICIAN_POINTS",
+    "AKANE_MODE_ACTOR_MUSICIAN_POINTS_FLAT",
     "AKANE_MODE_ACTOR_CULTURE_PERCENT",
     "AKANE_MODE_ACTOR_TOURISM_PERCENT"
   },
   [MODE_WARRIOR] = {
     "AKANE_MODE_WARRIOR_COMBAT",
-    "AKANE_MODE_WARRIOR_EXPERIENCE",
-    "AKANE_MODE_WARRIOR_SCIENCE_PERCENT",
+    "AKANE_MODE_WARRIOR_MOVEMENT",
+    "AKANE_MODE_WARRIOR_PRODUCTION_FLAT",
     "AKANE_MODE_WARRIOR_GENERAL_POINTS",
-    "AKANE_MODE_WARRIOR_GENERAL_POINTS_PER_ENCAMPMENT"
+    "AKANE_MODE_WARRIOR_GENERAL_POINTS_PER_ENCAMPMENT",
+    "AKANE_MODE_WARRIOR_ENCAMPMENT_PRODUCTION"
   }
 }
 
@@ -47,21 +53,27 @@ local MODE_NEGATIVE_MODIFIERS = {
     "AKANE_MODE_AI_FAITH_FLAT_NEGATIVE",
     "AKANE_MODE_AI_PROPHET_POINTS_NEGATIVE",
     "AKANE_MODE_AI_PROPHET_POINTS_PER_HOLY_SITE_NEGATIVE",
-    "AKANE_MODE_AI_FAITH_PERCENT_NEGATIVE"
+    "AKANE_MODE_AI_FAITH_PERCENT_NEGATIVE",
+    "AKANE_MODE_AI_RELIGIOUS_STRENGTH_NEGATIVE"
   },
   [MODE_ACTOR] = {
     "AKANE_MODE_ACTOR_CULTURE_FLAT_NEGATIVE",
     "AKANE_MODE_ACTOR_ARTIST_POINTS_NEGATIVE",
     "AKANE_MODE_ACTOR_ARTIST_POINTS_FLAT_NEGATIVE",
+    "AKANE_MODE_ACTOR_WRITER_POINTS_NEGATIVE",
+    "AKANE_MODE_ACTOR_WRITER_POINTS_FLAT_NEGATIVE",
+    "AKANE_MODE_ACTOR_MUSICIAN_POINTS_NEGATIVE",
+    "AKANE_MODE_ACTOR_MUSICIAN_POINTS_FLAT_NEGATIVE",
     "AKANE_MODE_ACTOR_CULTURE_PERCENT_NEGATIVE",
     "AKANE_MODE_ACTOR_TOURISM_PERCENT_NEGATIVE"
   },
   [MODE_WARRIOR] = {
     "AKANE_MODE_WARRIOR_COMBAT_NEGATIVE",
-    "AKANE_MODE_WARRIOR_EXPERIENCE_NEGATIVE",
-    "AKANE_MODE_WARRIOR_SCIENCE_PERCENT_NEGATIVE",
+    "AKANE_MODE_WARRIOR_MOVEMENT_NEGATIVE",
+    "AKANE_MODE_WARRIOR_PRODUCTION_FLAT_NEGATIVE",
     "AKANE_MODE_WARRIOR_GENERAL_POINTS_NEGATIVE",
-    "AKANE_MODE_WARRIOR_GENERAL_POINTS_PER_ENCAMPMENT_NEGATIVE"
+    "AKANE_MODE_WARRIOR_GENERAL_POINTS_PER_ENCAMPMENT_NEGATIVE",
+    "AKANE_MODE_WARRIOR_ENCAMPMENT_PRODUCTION_NEGATIVE"
   }
 }
 
@@ -216,29 +228,6 @@ local function GetCurrentTurnNumber()
   return math.max(0, Game.GetCurrentGameTurn())
 end
 
-local function GetSwitchGoldReward(playerID)
-  local currentTurn = GetCurrentTurnNumber()
-  local standardReward = (currentTurn + 9) * 4
-  local scaledReward = math.floor((standardReward * GetModeCooldownForCurrentGameSpeed()) / 10)
-  local minimumReward = math.max(8, GetModeCooldownForCurrentGameSpeed())
-  local finalReward = math.max(minimumReward, scaledReward)
-  Log("calculated switch gold reward playerID=" .. tostring(playerID) .. ", currentTurn=" .. tostring(currentTurn) .. ", reward=" .. tostring(finalReward))
-  return finalReward, currentTurn
-end
-
-local function GrantSwitchGoldReward(pPlayer)
-  if pPlayer == nil then
-    return 0, GetCurrentTurnNumber()
-  end
-
-  local rewardAmount, currentTurn = GetSwitchGoldReward(pPlayer:GetID())
-  local pTreasury = pPlayer:GetTreasury()
-  if pTreasury ~= nil and pTreasury.ChangeGoldBalance ~= nil and rewardAmount > 0 then
-    pTreasury:ChangeGoldBalance(rewardAmount)
-  end
-  return rewardAmount, currentTurn
-end
-
 local function IsSwitchBuffActive(pPlayer)
   if pPlayer == nil then
     return false
@@ -372,7 +361,6 @@ local function SetAkaneMode(playerID, newMode)
 
   local newCooldown = GetModeCooldownForCurrentGameSpeed()
   local switchBuffDuration = GetSwitchBuffDurationFromCooldown(newCooldown)
-  local goldReward, rewardTurn = GrantSwitchGoldReward(pPlayer)
   if switchBuffDuration > 0 then
     ApplySwitchBuff(pPlayer)
   end
@@ -384,9 +372,9 @@ local function SetAkaneMode(playerID, newMode)
   g_restoredBuffState[playerID] = switchBuffDuration > 0
   g_cleanedExpiredBuffTurn[playerID] = nil
 
-  ShowModeTextForPlayer(playerID, "LOC_AKANE_MODE_SWITCHED", GetModeLabelKey(newMode), newCooldown, switchBuffDuration, goldReward)
-  Log("mode switched playerID=" .. tostring(playerID) .. ", from=" .. tostring(currentMode) .. ", to=" .. tostring(newMode) .. ", cooldown=" .. tostring(newCooldown) .. ", switchBuffDuration=" .. tostring(switchBuffDuration) .. ", goldReward=" .. tostring(goldReward) .. ", rewardTurn=" .. tostring(rewardTurn))
-  return true, "LOC_AKANE_MODE_SWITCHED", GetModeLabelKey(newMode), newCooldown, switchBuffDuration, goldReward
+  ShowModeTextForPlayer(playerID, "LOC_AKANE_MODE_SWITCHED", GetModeLabelKey(newMode), newCooldown, switchBuffDuration)
+  Log("mode switched playerID=" .. tostring(playerID) .. ", from=" .. tostring(currentMode) .. ", to=" .. tostring(newMode) .. ", cooldown=" .. tostring(newCooldown) .. ", switchBuffDuration=" .. tostring(switchBuffDuration))
+  return true, "LOC_AKANE_MODE_SWITCHED", GetModeLabelKey(newMode), newCooldown, switchBuffDuration
 end
 
 local function OnPlayerTurnStarted(playerID, _turnNumber)
