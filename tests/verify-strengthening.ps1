@@ -9,6 +9,7 @@ $gameplay = Get-Content -Raw (Join-Path $projectRoot 'Scripts\Akane_Gameplay.lua
 $modeSystem = Get-Content -Raw (Join-Path $projectRoot 'Scripts\Akane_ModeSystem.lua')
 $textZh = Get-Content -Raw (Join-Path $projectRoot 'Text\Akane_Text_zh_Hans_CN.xml')
 $textEn = Get-Content -Raw (Join-Path $projectRoot 'Text\Akane_Text_en_US.xml')
+$readme = Get-Content -Raw -Encoding UTF8 (Join-Path $projectRoot 'README.md')
 
 $failures = New-Object System.Collections.Generic.List[string]
 
@@ -70,11 +71,14 @@ Expect-Match $gameplay 'ApplyStageAdjacencyDoublingForCity' 'Gameplay should per
 Expect-Match $gameplay 'DistrictAddedToMap' 'Gameplay should refresh stage adjacency bonuses when new districts are added.'
 Expect-Match $gameplay 'WonderCompleted' 'Gameplay should refresh stage adjacency bonuses when adjacent wonders are completed.'
 Expect-Match $gameplay 'Map.GetAdjacentPlot' 'Gameplay should inspect adjacency around the LALALAI district.'
-Expect-Match $gameplay 'GetWonderType' 'Gameplay should count adjacent wonders for LALALAI doubling.'
+Expect-Match $gameplay 'GetDistrictAdjacencyHalfSteps' 'Gameplay should recompute adjacency from the current district state when doubling yields.'
 
 Expect-Match $modifiers "\('AKANE_MODE_WARRIOR_PRODUCTION_FLAT', 'Amount', '1'\)" 'Ruby mode should keep its +1 flat production.'
 Expect-Match $modifiers "\('AKANE_MODE_WARRIOR_ENCAMPMENT_PRODUCTION', 'Amount', '1'\)" 'Ruby mode should keep its +1 Encampment production.'
 Expect-NotMatch $modifiers 'AKANE_MODE_WARRIOR_SCIENCE_PERCENT' 'Ruby mode should no longer use the old production-percent modifier id.'
+Expect-Match $gameplay 'UnitKilledInCombat' 'Ruby mode faith reward should hook a combat kill event.'
+Expect-Match $gameplay 'ChangeFaithBalance' 'Ruby mode faith reward should add faith to the attacker.'
+Expect-Match $gameplay 'AKANE_MODE_WARRIOR_FAITH_REWARD_WORLD_TEXT' 'Ruby mode faith reward should show world text when triggered.'
 
 Expect-Match $modifiers "\('AKANE_MODE_SWITCH_BUFF_FOOD', 'Amount', '16'\)" 'Mode switch yield buff should be +16%.'
 Expect-Match $modifiers "\('AKANE_MODE_SWITCH_BUFF_GOLD', 'Amount', '16'\)" 'Mode switch yield buff should be +16% for gold too.'
@@ -90,11 +94,16 @@ Expect-Match $textZh '\+16%' 'Chinese text should mention the updated switch buf
 Expect-Match $textZh 'LOC_UNIT_STAGE_ACTOR_DESCRIPTION' 'Chinese stage actor description row should exist.'
 Expect-Match $textZh 'LOC_AKANE_STAGE_ACTOR_PERFORM_TOOLTIP' 'Chinese stage actor tooltip row should exist.'
 
-Expect-Match $textEn 'Library, University, Research Lab' 'English leader text should mention the Campus building science chain.'
+Expect-Match $textEn 'Libraries, Universities, and Research Labs' 'English leader text should mention the Campus building science chain.'
 Expect-Match $textEn 'Scientific Theory' 'English leader text should still mention Scientific Theory.'
 Expect-Match $textEn '\+16% to all yields' 'English text should mention the updated switch buff.'
-Expect-Match $textEn 'double.*adjacency bonuses' 'English stage actor text should mention doubled adjacency.'
-Expect-Match $textEn '\+20% Tourism' 'English stage actor text should mention the tourism boost.'
+Expect-Match $textEn 'adjacency bonuses doubled|doubled\.(?:.*\n?)*adjacency bonuses|doubled' 'English stage actor text should mention doubled adjacency.'
+Expect-Match $textEn 'Tourism by \+20%|\+20%.*Tourism' 'English stage actor text should mention the tourism boost.'
+Expect-Match $textZh 'LOC_AKANE_MODE_WARRIOR_TOOLTIP[\s\S]*80%[\s\S]*ICON_Faith' 'Chinese text should mention Ruby mode''s faith-on-kill reward.'
+Expect-Match $textZh 'LOC_AKANE_MODE_WARRIOR_FAITH_REWARD_WORLD_TEXT' 'Chinese text should define Ruby mode''s faith reward world text.'
+Expect-Match $textEn 'defeating enemy units grants' 'English text should mention Ruby mode''s faith-on-kill reward.'
+Expect-Match $textEn '80%[^<]*Faith' 'English text should mention the 80% faith reward amount.'
+Expect-Match $readme '80% Cost[\s\S]*ICON_Faith' 'README should mention Ruby mode''s faith-on-kill reward.'
 Expect-NotMatch $textEn 'always grants \+1 \[ICON_Culture\] Culture' 'English leader text should no longer mention the removed flat culture.'
 Expect-NotMatch $textEn 'Scientific Theory[\s\S]*\+15%' 'English leader text should no longer say Scientific Theory gives +15% science.'
 

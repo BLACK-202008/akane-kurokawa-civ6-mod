@@ -9,6 +9,8 @@ local PROPERTY_MODE_CURRENT = "AKANE_MODE_CURRENT"
 local MODE_NONE = "MODE_NONE"
 local MODE_AI = "MODE_AI"
 local MODE_ACTOR = "MODE_ACTOR"
+local MODE_WARRIOR = "MODE_WARRIOR"
+local WARRIOR_MODE_FAITH_REWARD_RATIO = 0.8
 local STAGE_REWARD_MODIFIERS = {
   "AKANE_CITY_STAGE_AMPHITHEATER_CULTURE",
   "AKANE_CITY_STAGE_ART_MUSEUM_CULTURE",
@@ -74,6 +76,8 @@ local PROPERTY_CITY_STAGE_HARBOR_BONUS_APPLIED = "AKANE_CITY_STAGE_HARBOR_BONUS_
 local PROPERTY_CITY_STAGE_ENCAMPMENT_BONUS_APPLIED = "AKANE_CITY_STAGE_ENCAMPMENT_BONUS_APPLIED"
 local PROPERTY_CITY_STAGE_INDUSTRIAL_ZONE_BONUS_APPLIED = "AKANE_CITY_STAGE_INDUSTRIAL_ZONE_BONUS_APPLIED"
 local PROPERTY_CITY_STAGE_HOLY_SITE_BONUS_APPLIED = "AKANE_CITY_STAGE_HOLY_SITE_BONUS_APPLIED"
+local g_unitCostCache = {}
+local g_lastWarriorFaithRewardKey = nil
 
 local UNIT_STAGE_ACTOR_INDEX = GameInfo.Units[AKANE_UNIT_STAGE_ACTOR] and GameInfo.Units[AKANE_UNIT_STAGE_ACTOR].Index or -1
 local DISTRICT_LALALAI_INDEX = GameInfo.Districts[AKANE_DISTRICT_LALALAI] and GameInfo.Districts[AKANE_DISTRICT_LALALAI].Index or -1
@@ -126,6 +130,98 @@ local function GetCurrentMode(pPlayer)
     return MODE_NONE
   end
   return tostring(currentMode)
+end
+
+local function GetUnitDefinitionByIndex(unitTypeIndex)
+  if unitTypeIndex == nil or unitTypeIndex < 0 then
+    return nil
+  end
+  return GameInfo.Units[unitTypeIndex]
+end
+
+local function GetUnitBaseCostFromDefinition(unitDef)
+  if unitDef == nil then
+    return 0
+  end
+  return math.max(0, ToInt(unitDef.Cost))
+end
+
+local function GetUnitBaseCost(pUnit)
+  if pUnit == nil or pUnit.GetType == nil then
+    return 0
+  end
+  return GetUnitBaseCostFromDefinition(GetUnitDefinitionByIndex(pUnit:GetType()))
+end
+
+local function EnsureUnitCostCacheForPlayer(playerID)
+  if g_unitCostCache[playerID] == nil then
+    g_unitCostCache[playerID] = {}
+  end
+  return g_unitCostCache[playerID]
+end
+
+local function CacheUnitBaseCost(playerID, unitID, pUnit)
+  if playerID == nil or unitID == nil or pUnit == nil then
+    return 0
+  end
+
+  local unitCost = GetUnitBaseCost(pUnit)
+  EnsureUnitCostCacheForPlayer(playerID)[unitID] = unitCost
+  return unitCost
+end
+
+local function GetCachedUnitBaseCost(playerID, unitID)
+  if playerID == nil or unitID == nil then
+    return 0
+  end
+
+  local cacheForPlayer = g_unitCostCache[playerID]
+  if cacheForPlayer == nil then
+    return 0
+  end
+
+  return math.max(0, ToInt(cacheForPlayer[unitID]))
+end
+
+local function ClearCachedUnitBaseCost(playerID, unitID)
+  if playerID == nil or unitID == nil then
+    return
+  end
+
+  local cacheForPlayer = g_unitCostCache[playerID]
+  if cacheForPlayer ~= nil then
+    cacheForPlayer[unitID] = nil
+  end
+end
+
+local function RefreshPlayerUnitCostCache(playerID)
+  local pPlayer = Players[playerID]
+  if pPlayer == nil or not pPlayer:IsAlive() then
+    return
+  end
+
+  local pUnits = pPlayer:GetUnits()
+  if pUnits == nil then
+    return
+  end
+
+  local cacheForPlayer = EnsureUnitCostCacheForPlayer(playerID)
+  for key, _ in pairs(cacheForPlayer) do
+    cacheForPlayer[key] = nil
+  end
+
+  for _, pUnit in pUnits:Members() do
+    CacheUnitBaseCost(playerID, pUnit:GetID(), pUnit)
+  end
+end
+
+local function RefreshAllUnitCostCaches()
+  g_unitCostCache = {}
+  for playerID, pPlayer in pairs(Players) do
+    if pPlayer ~= nil and pPlayer:IsAlive() then
+      RefreshPlayerUnitCostCache(playerID)
+    end
+  end
 end
 
 local function GetPlayerAnchorCity(pPlayer)
@@ -242,6 +338,26 @@ local function GetRemainingStageActorCharges(pUnit)
   end
 
   return math.max(0, ToInt(charges))
+end
+
+local function GetWarriorModeFaithRewardAmount(defeatedPlayerID, defeatedUnitID)
+  local pDefeatedPlayer = Players[defeatedPlayerID]
+  if pDefeatedPlayer ~= nil then
+    local pUnits = pDefeatedPlayer:GetUnits()
+    if pUnits ~= nil then
+      local pDefeatedUnit = pUnits:FindID(defeatedUnitID)
+      if pDefeatedUnit ~= nil then
+        CacheUnitBaseCost(defeatedPlayerID, defeatedUnitID, pDefeatedUnit)
+      end
+    end
+  end
+
+  local unitCost = GetCachedUnitBaseCost(defeatedPlayerID, defeatedUnitID)
+  if unitCost <= 0 then
+    return 0
+  end
+
+  return math.max(0, math.floor(unitCost * WARRIOR_MODE_FAITH_REWARD_RATIO))
 end
 
 local function ResolveOwningCityFromDistrict(ownerID, pDistrict)
@@ -706,6 +822,62 @@ local function TryResolveAiModeFaithPurchaseRefund(playerID)
   return refundAmount > 0
 end
 
+local function TryGrantWarriorModeFaithReward(defeatedPlayerID, defeatedUnitID, attackerPlayerID, attackerUnitID)
+  local pAttackerPlayer = Players[attackerPlayerID]
+  if pAttackerPlayer == nil or not pAttackerPlayer:IsAlive() or not IsAkanePlayer(attackerPlayerID) then
+    ClearCachedUnitBaseCost(defeatedPlayerID, defeatedUnitID)
+    return false
+  end
+  if defeatedPlayerID == attackerPlayerID then
+    ClearCachedUnitBaseCost(defeatedPlayerID, defeatedUnitID)
+    return false
+  end
+  if GetCurrentMode(pAttackerPlayer) ~= MODE_WARRIOR then
+    ClearCachedUnitBaseCost(defeatedPlayerID, defeatedUnitID)
+    return false
+  end
+
+  local rewardKey = table.concat({
+    tostring(GetCurrentTurnNumber()),
+    tostring(defeatedPlayerID),
+    tostring(defeatedUnitID),
+    tostring(attackerPlayerID),
+    tostring(attackerUnitID)
+  }, ":")
+  if g_lastWarriorFaithRewardKey == rewardKey then
+    return false
+  end
+
+  local rewardFaith = GetWarriorModeFaithRewardAmount(defeatedPlayerID, defeatedUnitID)
+  ClearCachedUnitBaseCost(defeatedPlayerID, defeatedUnitID)
+  if rewardFaith <= 0 then
+    return false
+  end
+
+  local pReligion = pAttackerPlayer:GetReligion()
+  if pReligion == nil or pReligion.ChangeFaithBalance == nil then
+    Log("warrior faith reward skipped: religion API unavailable playerID=" .. tostring(attackerPlayerID))
+    return false
+  end
+
+  g_lastWarriorFaithRewardKey = rewardKey
+  pReligion:ChangeFaithBalance(rewardFaith)
+
+  local textX, textY = GetWorldTextLocationForUnitOrPlayer(pAttackerPlayer, attackerUnitID)
+  if textX ~= nil and textY ~= nil then
+    Game.AddWorldViewText(
+      attackerPlayerID,
+      Localize("LOC_AKANE_MODE_WARRIOR_FAITH_REWARD_WORLD_TEXT", rewardFaith),
+      textX,
+      textY,
+      0
+    )
+  end
+
+  Log("warrior faith reward granted attackerPlayerID=" .. tostring(attackerPlayerID) .. ", defeatedPlayerID=" .. tostring(defeatedPlayerID) .. ", defeatedUnitID=" .. tostring(defeatedUnitID) .. ", rewardFaith=" .. tostring(rewardFaith))
+  return true
+end
+
 local function UpdateArtProsperityWorldText(pPlayer, pSourceCity, stacks, turns, textTag)
   local pCity = pSourceCity or GetPlayerAnchorCity(pPlayer)
   if pCity == nil then
@@ -868,6 +1040,7 @@ function OnPlayerTurnStarted(playerID, _turnNumber)
   end
 
   SyncFaithBalanceSnapshot(pPlayer)
+  RefreshPlayerUnitCostCache(playerID)
 
   local pCities = pPlayer:GetCities()
   if pCities ~= nil then
@@ -890,6 +1063,15 @@ function OnPlayerTurnStarted(playerID, _turnNumber)
   elseif turns ~= 0 then
     pPlayer:SetProperty(PROPERTY_PLAYER_ART_TURNS, 0)
   end
+end
+
+function OnUnitKilledInCombat(defeatedPlayerID, defeatedUnitID, attackerPlayerID, attackerUnitID, ...)
+  TryGrantWarriorModeFaithReward(
+    ToInt(defeatedPlayerID),
+    ToInt(defeatedUnitID),
+    ToInt(attackerPlayerID),
+    ToInt(attackerUnitID)
+  )
 end
 
 function OnUnitGreatPersonActivated(playerID, unitID, _greatPersonClass, _greatPersonType)
@@ -1040,6 +1222,7 @@ end
 
 RestoreStageLegacyCultureModifiers()
 RestoreArtProsperityModifiers()
+RefreshAllUnitCostCaches()
 for _, pPlayer in ipairs(PlayerManager.GetAliveMajors() or {}) do
   SyncFaithBalanceSnapshot(pPlayer)
 end
@@ -1066,4 +1249,10 @@ elseif GameEvents ~= nil and GameEvents.OnGreatPersonActivated ~= nil then
 end
 if Events ~= nil and Events.UnitGreatPersonCreated ~= nil then
   Events.UnitGreatPersonCreated.Add(OnUnitGreatPersonCreated)
+end
+if Events ~= nil and Events.UnitKilledInCombat ~= nil then
+  Events.UnitKilledInCombat.Add(OnUnitKilledInCombat)
+end
+if GameEvents ~= nil and GameEvents.UnitKilledInCombat ~= nil then
+  GameEvents.UnitKilledInCombat.Add(OnUnitKilledInCombat)
 end
