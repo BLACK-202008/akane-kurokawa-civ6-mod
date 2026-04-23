@@ -28,7 +28,7 @@ Expect-NotMatch $modifiers "\('AKANE_MODE_ACTOR_CULTURE_FLAT', 'MODIFIER_PLAYER_
 Expect-NotMatch $modifiers "\('AKANE_MODE_WARRIOR_PRODUCTION_FLAT', 'MODIFIER_PLAYER_CITIES_ADJUST_CITY_YIELD_CHANGE', NULL\)" $failures 'Ruby mode flat production should no longer be applied to every city.'
 
 Expect-Match $modifiers "\('AKANE_MODE_AI_PROPHET_POINTS', 'MODIFIER_PLAYER_ADJUST_GREAT_PERSON_POINTS', NULL\)" $failures 'Ai mode flat Prophet points should be attached at the player level.'
-Expect-Match $modifiers "\('AKANE_MODE_AI_PROPHET_POINTS_PER_HOLY_SITE', 'MODIFIER_PLAYER_DISTRICTS_ADJUST_GREAT_PERSON_POINTS', 'DISTRICT_IS_HOLY_SITE'\)" $failures 'Ai mode per-Holy-Site Prophet points should be bound to Holy Site districts.'
+Expect-Match $modifiers "\('AKANE_MODE_AI_PROPHET_POINTS_PER_HOLY_SITE', 'MODIFIER_PLAYER_DISTRICTS_ADJUST_GREAT_PERSON_POINTS', 'AKANE_DISTRICT_IS_ANY_HOLY_SITE'\)" $failures 'Ai mode per-Holy-Site Prophet points should include Holy Site replacements.'
 Expect-Match $modifiers "\('AKANE_MODE_ACTOR_ARTIST_POINTS_FLAT', 'MODIFIER_PLAYER_ADJUST_GREAT_PERSON_POINTS', NULL\)" $failures 'Actor mode flat Artist points should be attached at the player level.'
 Expect-Match $modifiers "\('AKANE_MODE_ACTOR_WRITER_POINTS_FLAT', 'MODIFIER_PLAYER_ADJUST_GREAT_PERSON_POINTS', NULL\)" $failures 'Actor mode flat Writer points should be attached at the player level.'
 Expect-Match $modifiers "\('AKANE_MODE_ACTOR_MUSICIAN_POINTS_FLAT', 'MODIFIER_PLAYER_ADJUST_GREAT_PERSON_POINTS', NULL\)" $failures 'Actor mode flat Musician points should be attached at the player level.'
@@ -36,7 +36,7 @@ Expect-Match $modifiers "\('AKANE_MODE_ACTOR_ARTIST_POINTS', 'MODIFIER_PLAYER_DI
 Expect-Match $modifiers "\('AKANE_MODE_ACTOR_WRITER_POINTS', 'MODIFIER_PLAYER_DISTRICTS_ADJUST_GREAT_PERSON_POINTS', 'DISTRICT_IS_LALALAI'\)" $failures 'Actor mode per-district Writer points should be bound to LALALAI districts.'
 Expect-Match $modifiers "\('AKANE_MODE_ACTOR_MUSICIAN_POINTS', 'MODIFIER_PLAYER_DISTRICTS_ADJUST_GREAT_PERSON_POINTS', 'DISTRICT_IS_LALALAI'\)" $failures 'Actor mode per-district Musician points should be bound to LALALAI districts.'
 Expect-Match $modifiers "\('AKANE_MODE_WARRIOR_GENERAL_POINTS', 'MODIFIER_PLAYER_ADJUST_GREAT_PERSON_POINTS', NULL\)" $failures 'Ruby mode flat General points should be attached at the player level.'
-Expect-Match $modifiers "\('AKANE_MODE_WARRIOR_GENERAL_POINTS_PER_ENCAMPMENT', 'MODIFIER_PLAYER_DISTRICTS_ADJUST_GREAT_PERSON_POINTS', 'DISTRICT_IS_ENCAMPMENT'\)" $failures 'Ruby mode per-Encampment General points should be bound to Encampment districts.'
+Expect-Match $modifiers "\('AKANE_MODE_WARRIOR_GENERAL_POINTS_PER_ENCAMPMENT', 'MODIFIER_PLAYER_DISTRICTS_ADJUST_GREAT_PERSON_POINTS', 'AKANE_DISTRICT_IS_ANY_ENCAMPMENT'\)" $failures 'Ruby mode per-Encampment General points should include Encampment replacements.'
 
 Expect-Match $modeSystem 'AKANE_MODE_ACTOR_WRITER_POINTS' $failures 'Actor mode positive modifier list should include Great Writer points.'
 Expect-Match $modeSystem 'AKANE_MODE_ACTOR_WRITER_POINTS_FLAT' $failures 'Actor mode positive modifier list should include flat Great Writer points.'
