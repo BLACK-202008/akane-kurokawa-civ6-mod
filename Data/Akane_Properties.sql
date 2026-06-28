@@ -5,6 +5,14 @@
 -- City property: once-per-city stage performance lock.
 -- AKANE_CITY_STAGE_PERFORMED
 --
+-- City property: bookkeeping flag so permanent stage reward modifiers are only
+-- attached once, including when older saves are restored.
+-- AKANE_CITY_STAGE_REWARD_MODIFIERS_ATTACHED
+--
+-- City property: bookkeeping flag so permanent stage adjacency modifiers are
+-- only attached once, including when older saves are restored.
+-- AKANE_CITY_STAGE_ADJACENCY_MODIFIERS_ATTACHED
+--
 -- Player property: current empire-wide Art Prosperity stack count.
 -- AKANE_PLAYER_ART_PROSPERITY_STACKS
 --
