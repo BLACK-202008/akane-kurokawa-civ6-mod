@@ -6,6 +6,11 @@ local AKANE_LEADER_TYPE = "LEADER_KUROKAWA_AKANE"
 local PROPERTY_MODE_CURRENT = "AKANE_MODE_CURRENT"
 local PROPERTY_MODE_LAST_SWITCH_TURN = "AKANE_MODE_LAST_SWITCH_TURN"
 local PROPERTY_MODE_LAST_READY_ALERT_SWITCH_TURN = "AKANE_MODE_LAST_READY_ALERT_SWITCH_TURN"
+local PROPERTY_MODE_LEDGER_VERSION = "AKANE_MODE_LEDGER_VERSION"
+local PROPERTY_MODE_APPLIED_CURRENT = "AKANE_MODE_APPLIED_CURRENT"
+local PROPERTY_MODE_BUFF_APPLIED_SWITCH_TURN = "AKANE_MODE_BUFF_APPLIED_SWITCH_TURN"
+local PROPERTY_MODE_BUFF_CLEARED_SWITCH_TURN = "AKANE_MODE_BUFF_CLEARED_SWITCH_TURN"
+local AKANE_EVENT_MODE_SWITCH = "AKANE_MODE_SWITCH"
 
 local MODE_NONE = "MODE_NONE"
 local MODE_AI = "MODE_AI"
@@ -94,10 +99,6 @@ local MODE_SWITCH_BUFF_NEGATIVE_MODIFIERS = {
   "AKANE_MODE_SWITCH_BUFF_CULTURE_NEGATIVE",
   "AKANE_MODE_SWITCH_BUFF_FAITH_NEGATIVE"
 }
-
-local g_restoredModeState = {}
-local g_restoredBuffState = {}
-local g_cleanedExpiredBuffTurn = {}
 
 local function Log(message)
   print(AKANE_LOG_PREFIX .. " " .. tostring(message))
@@ -278,19 +279,41 @@ local function GetCooldownRemainingBySchedule(pPlayer, currentTurn)
   return math.max(0, (lastSwitchTurn + GetModeCooldownForCurrentGameSpeed()) - turnNow)
 end
 
+local function EnsureModeLedger(pPlayer)
+  if ToInt(pPlayer:GetProperty(PROPERTY_MODE_LEDGER_VERSION)) >= 1 then
+    return
+  end
+
+  -- AttachModifierByID effects and player properties survive save/load. Older
+  -- saves already have the recorded current mode attached: adopt it, never replay
+  -- it. An expired legacy buff is conservatively treated as already cleared.
+  -- The old script did not record attachment counts, so pre-existing duplicate
+  -- effects cannot be reconstructed or safely removed by this migration.
+  local currentMode = GetCurrentMode(pPlayer)
+  local lastSwitchTurn = GetLastSwitchTurn(pPlayer)
+  pPlayer:SetProperty(PROPERTY_MODE_APPLIED_CURRENT, currentMode)
+  pPlayer:SetProperty(PROPERTY_MODE_BUFF_APPLIED_SWITCH_TURN, lastSwitchTurn)
+  pPlayer:SetProperty(PROPERTY_MODE_BUFF_CLEARED_SWITCH_TURN,
+    IsSwitchBuffActive(pPlayer) and -1 or lastSwitchTurn)
+  pPlayer:SetProperty(PROPERTY_MODE_LEDGER_VERSION, 1)
+  if currentMode ~= MODE_NONE or lastSwitchTurn >= 0 then
+    Log("adopted legacy mode effects without replay playerID=" .. tostring(pPlayer:GetID()))
+  end
+end
+
 local function CleanupExpiredSwitchBuff(playerID, pPlayer)
   local lastSwitchTurn = GetLastSwitchTurn(pPlayer)
   local switchBuffDuration = GetSwitchBuffDuration()
   if lastSwitchTurn < 0 or switchBuffDuration <= 0 then
-    g_restoredBuffState[playerID] = false
     return false
   end
 
   local elapsedTurns = math.max(0, Game.GetCurrentGameTurn() - lastSwitchTurn)
-  if elapsedTurns >= switchBuffDuration and g_cleanedExpiredBuffTurn[playerID] ~= lastSwitchTurn then
+  local appliedTurn = ToInt(pPlayer:GetProperty(PROPERTY_MODE_BUFF_APPLIED_SWITCH_TURN))
+  local clearedTurn = ToInt(pPlayer:GetProperty(PROPERTY_MODE_BUFF_CLEARED_SWITCH_TURN))
+  if elapsedTurns >= switchBuffDuration and appliedTurn == lastSwitchTurn and clearedTurn ~= lastSwitchTurn then
     RevertSwitchBuff(pPlayer)
-    g_restoredBuffState[playerID] = false
-    g_cleanedExpiredBuffTurn[playerID] = lastSwitchTurn
+    pPlayer:SetProperty(PROPERTY_MODE_BUFF_CLEARED_SWITCH_TURN, lastSwitchTurn)
     Log("switch buff expired playerID=" .. tostring(playerID))
     return true
   end
@@ -315,15 +338,8 @@ local function RestoreAkaneModeState()
       if pPlayer:GetProperty(PROPERTY_MODE_LAST_READY_ALERT_SWITCH_TURN) == nil then
         pPlayer:SetProperty(PROPERTY_MODE_LAST_READY_ALERT_SWITCH_TURN, -1)
       end
-      if currentMode ~= MODE_NONE and g_restoredModeState[playerID] ~= currentMode then
-        ApplyMode(currentMode, pPlayer)
-        g_restoredModeState[playerID] = currentMode
-      end
+      EnsureModeLedger(pPlayer)
       CleanupExpiredSwitchBuff(playerID, pPlayer)
-      if IsSwitchBuffActive(pPlayer) and not g_restoredBuffState[playerID] then
-        ApplySwitchBuff(pPlayer)
-        g_restoredBuffState[playerID] = true
-      end
       Log("restored mode=" .. tostring(currentMode) .. " playerID=" .. tostring(playerID))
     end
   end
@@ -337,7 +353,10 @@ local function SetAkaneMode(playerID, newMode)
   if not IsAkanePlayer(playerID) or not pPlayer:IsHuman() then
     return false, "LOC_AKANE_MODE_NOT_AVAILABLE"
   end
-  if not IsSupportedMode(newMode) then
+  if not pPlayer:IsTurnActive() or pPlayer.AttachModifierByID == nil then
+    return false, "LOC_AKANE_MODE_NOT_AVAILABLE"
+  end
+  if not IsSupportedMode(newMode) or newMode == MODE_NONE then
     return false, "LOC_AKANE_MODE_NOT_AVAILABLE"
   end
 
@@ -354,24 +373,25 @@ local function SetAkaneMode(playerID, newMode)
     return false, "LOC_AKANE_MODE_ALREADY_ACTIVE", GetModeLabelKey(currentMode)
   end
 
-  if currentMode ~= MODE_NONE then
-    RevertMode(currentMode, pPlayer)
+  EnsureModeLedger(pPlayer)
+  CleanupExpiredSwitchBuff(playerID, pPlayer)
+  local appliedMode = pPlayer:GetProperty(PROPERTY_MODE_APPLIED_CURRENT)
+  if IsSupportedMode(appliedMode) and appliedMode ~= MODE_NONE then
+    RevertMode(appliedMode, pPlayer)
   end
   ApplyMode(newMode, pPlayer)
+  pPlayer:SetProperty(PROPERTY_MODE_APPLIED_CURRENT, newMode)
 
   local newCooldown = GetModeCooldownForCurrentGameSpeed()
   local switchBuffDuration = GetSwitchBuffDurationFromCooldown(newCooldown)
   if switchBuffDuration > 0 then
     ApplySwitchBuff(pPlayer)
+    pPlayer:SetProperty(PROPERTY_MODE_BUFF_APPLIED_SWITCH_TURN, currentTurn)
   end
   pPlayer:SetProperty(PROPERTY_MODE_CURRENT, newMode)
   local switchTurn = GetCurrentTurnNumber()
   pPlayer:SetProperty(PROPERTY_MODE_LAST_SWITCH_TURN, switchTurn)
   pPlayer:SetProperty(PROPERTY_MODE_LAST_READY_ALERT_SWITCH_TURN, -1)
-  g_restoredModeState[playerID] = newMode
-  g_restoredBuffState[playerID] = switchBuffDuration > 0
-  g_cleanedExpiredBuffTurn[playerID] = nil
-
   ShowModeTextForPlayer(playerID, "LOC_AKANE_MODE_SWITCHED", GetModeLabelKey(newMode), newCooldown, switchBuffDuration)
   Log("mode switched playerID=" .. tostring(playerID) .. ", from=" .. tostring(currentMode) .. ", to=" .. tostring(newMode) .. ", cooldown=" .. tostring(newCooldown) .. ", switchBuffDuration=" .. tostring(switchBuffDuration))
   return true, "LOC_AKANE_MODE_SWITCHED", GetModeLabelKey(newMode), newCooldown, switchBuffDuration
@@ -395,32 +415,35 @@ local function OnPlayerTurnStarted(playerID, _turnNumber)
   local elapsedTurns = math.max(0, currentTurn - lastSwitchTurn)
   local switchBuffDuration = GetSwitchBuffDuration()
   if switchBuffDuration <= 0 or lastSwitchTurn < 0 or elapsedTurns < switchBuffDuration then
-    if g_restoredBuffState[playerID] and switchBuffDuration > 0 and lastSwitchTurn >= 0 and elapsedTurns >= 0 and elapsedTurns < switchBuffDuration then
-      Log("switch buff decremented playerID=" .. tostring(playerID) .. ", remaining=" .. tostring(switchBuffDuration - elapsedTurns))
-    end
     return
   end
 
   CleanupExpiredSwitchBuff(playerID, pPlayer)
 end
 
-ExposedMembers.AkaneModeSystem = ExposedMembers.AkaneModeSystem or {}
+local function OnModeSwitchRequested(playerID, params)
+  if type(params) ~= "table" or type(params.mode) ~= "string" then
+    return false, "LOC_AKANE_MODE_NOT_AVAILABLE"
+  end
+  -- playerID comes from the synchronized player operation, never from its payload.
+  return SetAkaneMode(playerID, params.mode)
+end
+
+-- Replace the shared table so a reloaded context cannot retain old mutation APIs.
+-- The UI reads state here and sends mutations through EXECUTE_SCRIPT operations.
+ExposedMembers.AkaneModeSystem = {}
 ExposedMembers.AkaneModeSystem.MODE_NONE = MODE_NONE
 ExposedMembers.AkaneModeSystem.MODE_AI = MODE_AI
 ExposedMembers.AkaneModeSystem.MODE_ACTOR = MODE_ACTOR
 ExposedMembers.AkaneModeSystem.MODE_WARRIOR = MODE_WARRIOR
 ExposedMembers.AkaneModeSystem.GetModeCooldownForCurrentGameSpeed = GetModeCooldownForCurrentGameSpeed
-ExposedMembers.AkaneModeSystem.SetAkaneMode = SetAkaneMode
-ExposedMembers.AkaneModeSystem.RestoreAkaneModeState = RestoreAkaneModeState
-ExposedMembers.AkaneModeSystem.RequestModeSwitch = function(playerID, newMode)
-  return SetAkaneMode(playerID, newMode)
-end
 ExposedMembers.AkaneModeSystem.GetModeState = function(playerID)
   local pPlayer = Players[playerID]
   if pPlayer == nil then
     return {
       isAkanePlayer = false,
       isHuman = false,
+      isTurnActive = false,
       currentMode = MODE_NONE,
       cooldownRemaining = 0
     }
@@ -431,10 +454,12 @@ ExposedMembers.AkaneModeSystem.GetModeState = function(playerID)
   return {
     isAkanePlayer = IsAkanePlayer(playerID),
     isHuman = pPlayer:IsHuman(),
+    isTurnActive = pPlayer:IsTurnActive(),
     currentMode = GetCurrentMode(pPlayer),
     cooldownRemaining = effectiveCooldownRemaining
   }
 end
 
 RestoreAkaneModeState()
+GameEvents[AKANE_EVENT_MODE_SWITCH].Add(OnModeSwitchRequested)
 GameEvents.PlayerTurnStarted.Add(OnPlayerTurnStarted)

@@ -89,6 +89,9 @@ local PROPERTY_PLAYER_LAST_FAITH_SPEND_TURN = "AKANE_PLAYER_LAST_FAITH_SPEND_TUR
 local PROPERTY_PLAYER_PENDING_AI_PURCHASE = "AKANE_PLAYER_PENDING_AI_PURCHASE"
 local g_unitCostCache = {}
 local g_lastWarriorFaithRewardKey = nil
+-- These records describe a single queued UI purchase, not a general faith debit.
+-- In-flight requests deliberately do not survive loading a save.
+local g_faithPurchases = {}
 
 local UNIT_STAGE_ACTOR_INDEX = GameInfo.Units[AKANE_UNIT_STAGE_ACTOR] and GameInfo.Units[AKANE_UNIT_STAGE_ACTOR].Index or -1
 local DISTRICT_LALALAI_INDEX = GameInfo.Districts[AKANE_DISTRICT_LALALAI] and GameInfo.Districts[AKANE_DISTRICT_LALALAI].Index or -1
@@ -646,14 +649,6 @@ local function GetFaithBalance(pPlayer)
   return ToInt(pReligion:GetFaithBalance())
 end
 
-local function SyncFaithBalanceSnapshot(pPlayer)
-  if pPlayer == nil then
-    return
-  end
-
-  pPlayer:SetProperty(PROPERTY_PLAYER_LAST_FAITH_BALANCE, GetFaithBalance(pPlayer))
-end
-
 local function ClearPendingAiPurchase(pPlayer)
   if pPlayer == nil then
     return
@@ -662,54 +657,128 @@ local function ClearPendingAiPurchase(pPlayer)
   pPlayer:SetProperty(PROPERTY_PLAYER_PENDING_AI_PURCHASE, nil)
   pPlayer:SetProperty(PROPERTY_PLAYER_LAST_FAITH_SPEND, 0)
   pPlayer:SetProperty(PROPERTY_PLAYER_LAST_FAITH_SPEND_TURN, -1)
+  pPlayer:SetProperty(PROPERTY_PLAYER_LAST_FAITH_BALANCE, nil)
+  g_faithPurchases[pPlayer:GetID()] = nil
 end
 
-local function TryResolveAiModeFaithPurchaseRefund(playerID)
+local function IsFaithRefundPlayer(playerID)
   local pPlayer = Players[playerID]
-  if pPlayer == nil or not pPlayer:IsAlive() or not IsAkanePlayer(playerID) then
-    return false
-  end
-  if GetCurrentMode(pPlayer) ~= MODE_AI then
-    ClearPendingAiPurchase(pPlayer)
-    return false
-  end
+  return pPlayer ~= nil and pPlayer:IsAlive() and IsAkanePlayer(playerID)
+    and pPlayer:IsHuman() and GetCurrentMode(pPlayer) == MODE_AI
+end
 
-  local pendingPurchase = pPlayer:GetProperty(PROPERTY_PLAYER_PENDING_AI_PURCHASE)
-  if pendingPurchase == nil then
-    return false
-  end
-
-  local lastFaithSpendTurn = ToInt(pPlayer:GetProperty(PROPERTY_PLAYER_LAST_FAITH_SPEND_TURN))
-  local lastFaithSpend = ToInt(pPlayer:GetProperty(PROPERTY_PLAYER_LAST_FAITH_SPEND))
-  if lastFaithSpend <= 0 or lastFaithSpendTurn ~= GetCurrentTurnNumber() then
-    return false
-  end
-
-  local refundAmount = math.floor(lastFaithSpend * 0.8)
-  if refundAmount > 0 then
-    local pTreasury = pPlayer:GetTreasury()
-    if pTreasury ~= nil and pTreasury.ChangeGoldBalance ~= nil then
-      pTreasury:ChangeGoldBalance(refundAmount)
+local function RemoveFaithPurchase(playerID, purchase)
+  local pending = g_faithPurchases[playerID] or {}
+  for index, candidate in ipairs(pending) do
+    if candidate == purchase then
+      table.remove(pending, index)
+      break
     end
-
-    local textX = pendingPurchase.x
-    local textY = pendingPurchase.y
-    if textX ~= nil and textY ~= nil then
-      Game.AddWorldViewText(
-        playerID,
-        Localize("LOC_AKANE_MODE_AI_FAITH_REFUND_WORLD_TEXT", refundAmount),
-        textX,
-        textY,
-        0
-      )
-    end
-
-    Log("ai faith purchase refund granted playerID=" .. tostring(playerID) .. ", spentFaith=" .. tostring(lastFaithSpend) .. ", refundGold=" .. tostring(refundAmount))
   end
+end
 
-  ClearPendingAiPurchase(pPlayer)
-  SyncFaithBalanceSnapshot(pPlayer)
-  return refundAmount > 0
+local function TryResolveAiModeFaithPurchaseRefund(playerID, purchase)
+  if purchase == nil or not purchase.completed or not purchase.confirmed then
+    return
+  end
+  -- Consume before granting, so duplicate events cannot refund a purchase twice.
+  RemoveFaithPurchase(playerID, purchase)
+  if not IsFaithRefundPlayer(playerID) or purchase.turn ~= GetCurrentTurnNumber() then
+    return
+  end
+  if purchase.spentFaith <= 0 or math.abs(purchase.spentFaith - purchase.expectedCost) > 0.000001 then
+    return
+  end
+  local pPlayer = Players[playerID]
+  local refundAmount = math.floor(purchase.spentFaith * 0.8)
+  local pTreasury = pPlayer:GetTreasury()
+  if refundAmount <= 0 or pTreasury == nil or pTreasury.ChangeGoldBalance == nil then
+    return
+  end
+  pTreasury:ChangeGoldBalance(refundAmount)
+  Game.AddWorldViewText(playerID,
+    Localize("LOC_AKANE_MODE_AI_FAITH_REFUND_WORLD_TEXT", refundAmount), purchase.x, purchase.y, 0)
+  Log("ai faith purchase refund granted playerID=" .. tostring(playerID)
+    .. ", spentFaith=" .. tostring(purchase.spentFaith) .. ", refundGold=" .. tostring(refundAmount))
+end
+
+local function OnFaithPurchaseBegin(playerID, parameters)
+  if not IsFaithRefundPlayer(playerID) or type(parameters) ~= "table"
+    or type(parameters.requestID) ~= "string" or #parameters.requestID == 0 or #parameters.requestID > 128
+    or type(parameters.itemType) ~= "string" then
+    return
+  end
+  local kind = parameters.itemKind
+  local rows = kind == "UNIT" and GameInfo.Units or kind == "BUILDING" and GameInfo.Buildings or nil
+  local row = rows ~= nil and rows[parameters.itemType] or nil
+  local cityID = tonumber(parameters.cityID)
+  local cost = tonumber(parameters.expectedCost)
+  if row == nil or cityID == nil or cityID ~= cityID or cityID < 0
+    or cityID > 2147483647 or cityID ~= math.floor(cityID) or cost == nil
+    or cost ~= cost or cost <= 0 or cost == math.huge then
+    return
+  end
+  local formation = tonumber(parameters.formation)
+  if kind == "UNIT" then
+    local formations = MilitaryFormationTypes
+    if formation == nil or formations == nil
+      or (formation ~= formations.STANDARD_MILITARY_FORMATION
+        and formation ~= formations.CORPS_MILITARY_FORMATION
+        and formation ~= formations.ARMY_MILITARY_FORMATION) then
+      return
+    end
+  end
+  local city = CityManager.GetCity(playerID, cityID)
+  if city == nil or city:GetOwner() ~= playerID then return end
+  -- Use the current native price when available; the panel's cached quote can
+  -- predate an incremental faith price or another cost change.
+  local cityGold = city.GetGold ~= nil and city:GetGold() or nil
+  if cityGold ~= nil and cityGold.GetPurchaseCost ~= nil then
+    local faithYield = GameInfo.Yields.YIELD_FAITH
+    if faithYield == nil then return end
+    local nativeCost
+    if kind == "UNIT" then
+      nativeCost = cityGold:GetPurchaseCost(faithYield.Index, row.Hash, formation)
+    else
+      nativeCost = cityGold:GetPurchaseCost(faithYield.Index, row.Hash)
+    end
+    if type(nativeCost) ~= "number" or nativeCost ~= nativeCost or nativeCost <= 0
+      or nativeCost == math.huge then return end
+    cost = nativeCost
+  end
+  local pending = g_faithPurchases[playerID] or {}
+  for _, purchase in ipairs(pending) do
+    if purchase.requestID == parameters.requestID then return end
+  end
+  -- A second begin cannot inherit an unfinished earlier purchase.
+  for index = #pending, 1, -1 do
+    if not pending[index].completed then table.remove(pending, index) end
+  end
+  if #pending >= 32 then pending = {} end
+  pending[#pending + 1] = {
+    requestID = parameters.requestID, cityID = city:GetID(),
+    purchaseType = kind == "UNIT" and EventSubTypes.UNIT or EventSubTypes.BUILDING,
+    objectType = row.Index, expectedCost = cost, faithBefore = GetFaithBalance(Players[playerID]),
+    turn = GetCurrentTurnNumber(), x = city:GetX(), y = city:GetY(),
+  }
+  g_faithPurchases[playerID] = pending
+end
+
+local function OnFaithPurchaseComplete(playerID, parameters)
+  if type(parameters) ~= "table" or not IsFaithRefundPlayer(playerID) then return end
+  for _, purchase in ipairs(g_faithPurchases[playerID] or {}) do
+    if purchase.requestID == parameters.requestID then
+      if purchase.completed then return end
+      purchase.completed = true
+      purchase.spentFaith = purchase.faithBefore - GetFaithBalance(Players[playerID])
+      if purchase.turn ~= GetCurrentTurnNumber() or purchase.spentFaith <= 0 then
+        RemoveFaithPurchase(playerID, purchase)
+      else
+        TryResolveAiModeFaithPurchaseRefund(playerID, purchase)
+      end
+      return
+    end
+  end
 end
 
 local function TryGrantWarriorModeFaithReward(defeatedPlayerID, defeatedUnitID, attackerPlayerID, attackerUnitID)
@@ -933,7 +1002,7 @@ function OnPlayerTurnStarted(playerID, _turnNumber)
     return
   end
 
-  SyncFaithBalanceSnapshot(pPlayer)
+  ClearPendingAiPurchase(pPlayer)
   RefreshPlayerUnitCostCache(playerID)
 
   local stacks = ToInt(pPlayer:GetProperty(PROPERTY_PLAYER_ART_STACKS))
@@ -969,47 +1038,17 @@ function OnUnitGreatPersonCreated(playerID, unitID, _greatPersonClass, _greatPer
   GrantRandomActorModeInspiration(playerID, unitID)
 end
 
-function OnFaithChanged(playerID, _yield, balance)
-  local pPlayer = Players[playerID]
-  if pPlayer == nil or not pPlayer:IsAlive() then
-    return
-  end
-
-  local previousBalance = ToInt(pPlayer:GetProperty(PROPERTY_PLAYER_LAST_FAITH_BALANCE))
-  local currentBalance = ToInt(balance)
-  if currentBalance < previousBalance then
-    pPlayer:SetProperty(PROPERTY_PLAYER_LAST_FAITH_SPEND, previousBalance - currentBalance)
-    pPlayer:SetProperty(PROPERTY_PLAYER_LAST_FAITH_SPEND_TURN, GetCurrentTurnNumber())
-  end
-  pPlayer:SetProperty(PROPERTY_PLAYER_LAST_FAITH_BALANCE, currentBalance)
-
-  TryResolveAiModeFaithPurchaseRefund(playerID)
-end
-
 function OnCityMadePurchase(playerID, cityID, iX, iY, purchaseType, objectType)
-  local pPlayer = Players[playerID]
-  if pPlayer == nil or not pPlayer:IsAlive() or not IsAkanePlayer(playerID) then
-    return
+  if not IsFaithRefundPlayer(playerID) then return end
+  for _, purchase in ipairs(g_faithPurchases[playerID] or {}) do
+    if not purchase.confirmed and purchase.turn == GetCurrentTurnNumber()
+      and purchase.cityID == cityID and purchase.purchaseType == purchaseType
+      and purchase.objectType == objectType then
+      purchase.confirmed = true
+      TryResolveAiModeFaithPurchaseRefund(playerID, purchase)
+      return
+    end
   end
-  if GetCurrentMode(pPlayer) ~= MODE_AI then
-    ClearPendingAiPurchase(pPlayer)
-    return
-  end
-
-  if purchaseType ~= EventSubTypes.UNIT and purchaseType ~= EventSubTypes.BUILDING then
-    return
-  end
-
-  pPlayer:SetProperty(PROPERTY_PLAYER_PENDING_AI_PURCHASE, {
-    cityID = cityID,
-    objectType = objectType,
-    purchaseType = purchaseType,
-    turn = GetCurrentTurnNumber(),
-    x = iX,
-    y = iY
-  })
-
-  TryResolveAiModeFaithPurchaseRefund(playerID)
 end
 
 function AKANE_STAGE_ACTOR_PERFORM(playerID, unitIDOrParams)
@@ -1075,13 +1114,12 @@ RestoreStagePerformanceModifiers()
 RestoreArtProsperityModifiers()
 RefreshAllUnitCostCaches()
 for _, pPlayer in ipairs(PlayerManager.GetAliveMajors() or {}) do
-  SyncFaithBalanceSnapshot(pPlayer)
+  ClearPendingAiPurchase(pPlayer)
 end
 GameEvents[AKANE_EVENT_STAGE_PERFORM].Add(AKANE_STAGE_ACTOR_PERFORM)
 GameEvents.PlayerTurnStarted.Add(OnPlayerTurnStarted)
-if Events ~= nil and Events.FaithChanged ~= nil then
-  Events.FaithChanged.Add(OnFaithChanged)
-end
+GameEvents.AKANE_FAITH_PURCHASE_BEGIN.Add(OnFaithPurchaseBegin)
+GameEvents.AKANE_FAITH_PURCHASE_COMPLETE.Add(OnFaithPurchaseComplete)
 if Events ~= nil and Events.CityMadePurchase ~= nil then
   Events.CityMadePurchase.Add(OnCityMadePurchase)
 end

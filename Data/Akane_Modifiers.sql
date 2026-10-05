@@ -1,7 +1,16 @@
--- Task 4: static civilization ability pieces tied to the Lalalai district.
--- Building-yield boosts below still enumerate the supported Lalalai chains, but
--- their underlying city/district requirements now resolve through replacement-
--- aware requirement sets so captured unique districts and buildings keep working.
+-- Static civilization ability pieces tied to the Lalalai district.
+-- The 23 building rows declare the existing BuildingType/yield pairs and their
+-- city guards. The attachment block below converts them into district-owned
+-- payloads: player cities -> each city's adjacent district -> its owner city.
+-- BuildingType arguments and native BuildingReplaces behavior are preserved.
+
+INSERT INTO Types (Type, Kind) VALUES
+('MODIFIER_AKANE_CITY_DISTRICTS_ATTACH_MODIFIER', 'KIND_MODIFIER'),
+('MODIFIER_AKANE_DISTRICT_OWNER_CITY_BUILDING_YIELD', 'KIND_MODIFIER');
+
+INSERT INTO DynamicModifiers (ModifierType, CollectionType, EffectType) VALUES
+('MODIFIER_AKANE_CITY_DISTRICTS_ATTACH_MODIFIER', 'COLLECTION_CITY_DISTRICTS', 'EFFECT_ATTACH_MODIFIER'),
+('MODIFIER_AKANE_DISTRICT_OWNER_CITY_BUILDING_YIELD', 'COLLECTION_OWNER_CITY', 'EFFECT_ADJUST_BUILDING_YIELD_MODIFIER');
 
 INSERT INTO Modifiers (ModifierId, ModifierType, SubjectRequirementSetId) VALUES
 ('AKANE_BUILDING_LIBRARY_FROM_LALALAI', 'MODIFIER_PLAYER_CITIES_ADJUST_BUILDING_YIELD_MODIFIER', 'AKANE_CITY_HAS_CAMPUS_AND_LALALAI'),
@@ -680,6 +689,66 @@ INSERT INTO TraitModifiers (TraitType, ModifierId) VALUES
 ('TRAIT_LEADER_KUROKAWA_AKANE', 'AKANE_LEADER_REASONING_CULTURE_FLAT'),
 ('TRAIT_LEADER_KUROKAWA_AKANE', 'AKANE_LEADER_REASONING_SCIENCE_PERCENT'),
 ('TRAIT_LEADER_KUROKAWA_AKANE', 'AKANE_LEADER_REASONING_SCIENCE_THEORY_PERCENT');
+
+-- Building bonuses must select a district before testing plot adjacency. Keep
+-- the existing same-city prerequisite on the outer city collection, select
+-- only that city's matching district (including captured replacements), then
+-- apply the original building/yield payload to the selected district's city.
+-- Never use COLLECTION_PLAYER_CITIES again from a district-owned payload: that
+-- would spread each selected district's building bonus across the empire.
+CREATE TABLE AKANE_BuildingYieldChains (
+  ModifierId TEXT NOT NULL PRIMARY KEY,
+  CityRequirementSetId TEXT NOT NULL,
+  DistrictRequirementSetId TEXT NOT NULL
+);
+
+INSERT INTO AKANE_BuildingYieldChains (ModifierId, CityRequirementSetId, DistrictRequirementSetId)
+SELECT ModifierId, SubjectRequirementSetId,
+  CASE SubjectRequirementSetId
+    WHEN 'AKANE_CITY_HAS_CAMPUS_AND_LALALAI' THEN 'AKANE_DISTRICT_IS_CAMPUS_AND_ADJ_LALALAI'
+    WHEN 'AKANE_CITY_HAS_COMMERCIAL_HUB_AND_LALALAI' THEN 'AKANE_DISTRICT_IS_COMMERCIAL_HUB_AND_ADJ_LALALAI'
+    WHEN 'AKANE_CITY_HAS_HARBOR_AND_LALALAI' THEN 'AKANE_DISTRICT_IS_HARBOR_AND_ADJ_LALALAI'
+    WHEN 'AKANE_CITY_HAS_ENCAMPMENT_AND_LALALAI' THEN 'AKANE_DISTRICT_IS_ENCAMPMENT_AND_ADJ_LALALAI'
+    WHEN 'AKANE_CITY_HAS_INDUSTRIAL_ZONE_AND_LALALAI' THEN 'AKANE_DISTRICT_IS_INDUSTRIAL_ZONE_AND_ADJ_LALALAI'
+    WHEN 'AKANE_CITY_HAS_HOLY_SITE_AND_LALALAI' THEN 'AKANE_DISTRICT_IS_HOLY_SITE_AND_ADJ_LALALAI'
+  END
+FROM Modifiers
+WHERE ModifierId LIKE 'AKANE_BUILDING_%_FROM_LALALAI'
+  AND ModifierType = 'MODIFIER_PLAYER_CITIES_ADJUST_BUILDING_YIELD_MODIFIER';
+
+INSERT INTO Modifiers (ModifierId, ModifierType, SubjectRequirementSetId)
+SELECT ModifierId || '_CITY_ATTACH', 'MODIFIER_PLAYER_CITIES_ATTACH_MODIFIER', CityRequirementSetId
+FROM AKANE_BuildingYieldChains;
+
+INSERT INTO Modifiers (ModifierId, ModifierType, SubjectRequirementSetId)
+SELECT ModifierId || '_DISTRICT_ATTACH', 'MODIFIER_AKANE_CITY_DISTRICTS_ATTACH_MODIFIER', DistrictRequirementSetId
+FROM AKANE_BuildingYieldChains;
+
+INSERT INTO ModifierArguments (ModifierId, Name, Value)
+SELECT ModifierId || '_CITY_ATTACH', 'ModifierId', ModifierId || '_DISTRICT_ATTACH'
+FROM AKANE_BuildingYieldChains;
+
+INSERT INTO ModifierArguments (ModifierId, Name, Value)
+SELECT ModifierId || '_DISTRICT_ATTACH', 'ModifierId', ModifierId
+FROM AKANE_BuildingYieldChains;
+
+-- Each payload now owns a district, but its subject is the district's city.
+-- The original city guard belongs to the outer attachment, not to this payload.
+-- A per-city limit prevents duplicate same-class districts in one captured or
+-- externally modified city from stacking the same building bonus twice.
+UPDATE Modifiers
+SET ModifierType = 'MODIFIER_AKANE_DISTRICT_OWNER_CITY_BUILDING_YIELD',
+    OwnerRequirementSetId = NULL,
+    SubjectRequirementSetId = NULL,
+    SubjectStackLimit = 1
+WHERE ModifierId IN (SELECT ModifierId FROM AKANE_BuildingYieldChains);
+
+UPDATE TraitModifiers
+SET ModifierId = ModifierId || '_CITY_ATTACH'
+WHERE TraitType = 'TRAIT_CIVILIZATION_LALALAI'
+  AND ModifierId IN (SELECT ModifierId FROM AKANE_BuildingYieldChains);
+
+DROP TABLE AKANE_BuildingYieldChains;
 
 -- Extend Lalalai adjacency support to captured unique districts.
 INSERT INTO District_Adjacencies (DistrictType, YieldChangeId)

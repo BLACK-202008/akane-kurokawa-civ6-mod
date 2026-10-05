@@ -3002,5 +3002,6 @@ function Initialize()
 	LuaEvents.Tutorial_ProductionOpen.Add( OnTutorialProductionOpen );
 	LuaEvents.ProductionManager_SelectedIndexChanged.Add( OnManagerSelectedIndexChanged );
 end
+include("Akane_PurchaseSupport");
 Initialize();
 

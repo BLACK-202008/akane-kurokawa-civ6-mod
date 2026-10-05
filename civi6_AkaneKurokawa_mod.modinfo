@@ -37,6 +37,9 @@
     <File>UI/Akane_DiplomacyOverlay.lua</File>
     <File>UI/Akane_DiplomacyOverlay.xml</File>
     <File>UI/Akane_ProductionPanel_Expansion2.lua</File>
+    <File>UI/Akane_ProductionPanel_Base.lua</File>
+    <File>UI/Akane_ProductionPanel_Expansion1.lua</File>
+    <File>UI/Akane_PurchaseSupport.lua</File>
     <File>UI/Akane_ProductionHelper.lua</File>
     <File>UI/Akane_CitySupport_Expansion2.lua</File>
     <File>Text/Akane_Text_en_US.xml</File>
@@ -147,6 +150,9 @@
       <File>UI/Akane_DiplomacyOverlay.lua</File>
       <File>UI/Akane_DiplomacyOverlay.xml</File>
       <File>UI/Akane_ProductionPanel_Expansion2.lua</File>
+      <File>UI/Akane_ProductionPanel_Base.lua</File>
+      <File>UI/Akane_ProductionPanel_Expansion1.lua</File>
+      <File>UI/Akane_PurchaseSupport.lua</File>
       <File>UI/Akane_ProductionHelper.lua</File>
       <File>UI/Akane_CitySupport_Expansion2.lua</File>
       <File>ArtDefs/Units.artdef</File>
@@ -195,6 +201,20 @@
         <LoadOrder>100000</LoadOrder>
         <LuaContext>UnitPanel</LuaContext>
         <LuaReplace>UI/Akane_UnitPanel_Expansion2.lua</LuaReplace>
+      </Properties>
+    </ReplaceUIScript>
+    <ReplaceUIScript id="Akane_ProductionPanel_Base" criteria="BaseGame">
+      <Properties>
+        <LoadOrder>100000</LoadOrder>
+        <LuaContext>ProductionPanel</LuaContext>
+        <LuaReplace>UI/Akane_ProductionPanel_Base.lua</LuaReplace>
+      </Properties>
+    </ReplaceUIScript>
+    <ReplaceUIScript id="Akane_ProductionPanel_Expansion1" criteria="Expansion1">
+      <Properties>
+        <LoadOrder>100000</LoadOrder>
+        <LuaContext>ProductionPanel</LuaContext>
+        <LuaReplace>UI/Akane_ProductionPanel_Expansion1.lua</LuaReplace>
       </Properties>
     </ReplaceUIScript>
     <ReplaceUIScript id="Akane_ProductionPanel_Expansion2" criteria="Expansion2">
