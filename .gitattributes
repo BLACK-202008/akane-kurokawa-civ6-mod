@@ -1,0 +1,5 @@
+# Preserve existing Git blob line endings during the directory move.
+* text=auto
+mod/civi6_AkaneKurokawa_mod/UI/Akane_ProductionPanel_Expansion2.lua -text
+mod/civi6_AkaneKurokawa_mod/UI/Akane_ProductionHelper.lua -text
+mod/civi6_AkaneKurokawa_mod/UI/Akane_CitySupport_Expansion2.lua -text
