@@ -35,11 +35,12 @@ local function WrapFaithPurchase(original, kind, formation, costField)
       cityID=city:GetID(), itemKind=kind, itemType=entry.Type,
       expectedCost=cost, formation=formation,
     })
-    local results = table.pack(original(city, entry, ...))
+    -- The native purchase functions return nothing. Civ6 Lua is 5.1-based, so
+    -- table.pack/table.unpack are not available to forward results anyway.
+    original(city, entry, ...)
     UI.RequestPlayerOperation(playerID, PlayerOperations.EXECUTE_SCRIPT, {
       OnStart="AKANE_FAITH_PURCHASE_COMPLETE", requestID=requestID,
     })
-    return table.unpack(results, 1, results.n)
   end
 end
 local formations = MilitaryFormationTypes
