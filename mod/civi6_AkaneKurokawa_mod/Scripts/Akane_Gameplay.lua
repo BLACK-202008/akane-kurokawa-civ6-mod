@@ -720,11 +720,13 @@ local function OnFaithPurchaseBegin(playerID, parameters)
   end
   local formation = tonumber(parameters.formation)
   if kind == "UNIT" then
+    -- Gameplay scripts only define STANDARD_FORMATION, CORPS_FORMATION and
+    -- ARMY_FORMATION; the *_MILITARY_FORMATION aliases exist only in UI contexts.
     local formations = MilitaryFormationTypes
     if formation == nil or formations == nil
-      or (formation ~= formations.STANDARD_MILITARY_FORMATION
-        and formation ~= formations.CORPS_MILITARY_FORMATION
-        and formation ~= formations.ARMY_MILITARY_FORMATION) then
+      or (formation ~= formations.STANDARD_FORMATION
+        and formation ~= formations.CORPS_FORMATION
+        and formation ~= formations.ARMY_FORMATION) then
       return
     end
   end
