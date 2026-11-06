@@ -40,10 +40,11 @@ end
 local function AttachPanelToWorldTracker()
   local topPanelRoot = ContextPtr:LookUpControl("/InGame/TopPanel")
   if topPanelRoot ~= nil then
+    -- This path is the TopPanel LuaContext, not a Stack: it has no AddChild or
+    -- CalculateSize. ChangeParent already appends the panel as its last child,
+    -- so only the moved panel needs re-anchoring.
     Controls.AkaneModePanelRoot:ChangeParent(topPanelRoot)
-    topPanelRoot:AddChild(Controls.AkaneModePanelRoot)
-    topPanelRoot:CalculateSize()
-    topPanelRoot:ReprocessAnchoring()
+    Controls.AkaneModePanelRoot:ReprocessAnchoring()
     Log("attached mode panel to TopPanel")
     return
   end

@@ -57,10 +57,12 @@ end
 local function AttachToDiplomacyView()
   local diplomacyView = ContextPtr:LookUpControl("/InGame/DiplomacyActionView")
   if diplomacyView ~= nil then
+    -- This path is the DiplomacyActionView LuaContext, which has no
+    -- CalculateSize. Index 0 draws the art behind the diplomacy controls; only
+    -- the moved overlay needs re-anchoring.
     Controls.OverlayRoot:ChangeParent(diplomacyView)
     diplomacyView:AddChildAtIndex(Controls.OverlayRoot, 0)
-    diplomacyView:CalculateSize()
-    diplomacyView:ReprocessAnchoring()
+    Controls.OverlayRoot:ReprocessAnchoring()
   end
 end
 
